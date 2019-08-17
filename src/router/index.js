@@ -7,7 +7,9 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/', name: 'Home', component: _ => import('@/views/Home/Home'), meta: { title: 'Home' } }
+    { path: '/', name: 'Home', component: _ => import('@/views/Home/Home'), meta: { title: 'Home' } },
+    { path: '/404', name: '404', component: _ => import('@/views/404/NotFound'), meta: { title: '404' } },
+    { path: '*', redirect: '/404' }
   ],
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {

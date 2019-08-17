@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <navMenu :navs="navs"></navMenu>
+    <ff-menu :navs="navs"></ff-menu>
   </div>
 </template>
 
