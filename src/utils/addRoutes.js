@@ -23,10 +23,10 @@ const isBaseRoutes = route => {
 // 主路由
 let Main = [
   {
-    path: '/main',
-    name: 'main',
+    path: '/Main',
+    name: 'Main',
     component: _ => import('@/views/Main/Main'),
-    meta: { title: 'main' }
+    meta: { title: 'Main' }
   }
 ]
 
@@ -39,7 +39,7 @@ let flatRoutes = routesCtx.keys().map(route => {
   let component = compImport(route)
   let title = comp.title || comp.name
   let hidden = comp.hidden === true
-  let pname = comp.pname || 'main'
+  let pname = comp.pname || 'Main'
   return {
     path: name,
     name,
@@ -62,7 +62,7 @@ flatRoutes.forEach(route => {
 
 // 按依赖关系构建路由
 flatRoutes.forEach(route => {
-  if (route.name === 'main') {
+  if (route.name === 'Main') {
     routes.push(route)
   } else {
     let parent = routesMap[route.meta.pname]

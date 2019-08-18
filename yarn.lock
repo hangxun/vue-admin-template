@@ -8104,6 +8104,13 @@ vue-loader@^15.7.0:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-metro-tile@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.npm.taobao.org/vue-metro-tile/download/vue-metro-tile-1.0.6.tgz#40af27f5ff635692438efa1de3fd06dd612b61d4"
+  integrity sha1-QK8n9f9jVpJDjvod4/0G3WErYdQ=
+  dependencies:
+    vue "^2.6.10"
+
 vue-router@^3.0.3:
   version "3.0.6"
   resolved "https://registry.npm.taobao.org/vue-router/download/vue-router-3.0.6.tgz#2e4f0f9cbb0b96d0205ab2690cfe588935136ac3"

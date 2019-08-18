@@ -28,7 +28,7 @@ yarn lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### 项目结构
+### 项目主要结构
 * public：公共文件及静态资源
 * src: 开发目录
     + assets: 静态资源
@@ -51,22 +51,23 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
     
 ### 路由配置
 路由分为静态路由和动态路由，静态路由为router/index.js中配置的Home和404页面。
-动态路由通过utils/addRoutes.js直接读取views下所有的.vue文件并导出路由数据，
-在router/index.js中通过`router.addRoutes()`动态添加。
+动态路由通过utils/addRoutes.js直接读取views下所有的.vue文件并生成路由数据，动态添加。
 
-#### 动态路由配置
+#### 动态路由组件配置
 ```
 export default {
-  name: 'name',
-  title: 'title',
-  pname: 'pname'，
-  drother： false
+  name: string,
+  title: string,
+  pname: string，
+  drother： boolean,
+  hidden: boolean
 }
 ```
 * name: 组件名
-* title: 路由标题
+* title: 路由标题，ff-menu中显示的文字，若不填则显示name
 * pname: 父组件名，不填默认Main
 * drother: 默认false，若为true则不加载此路由 
+* hidden: 是否在ff-menu中显示 
 
     
     
