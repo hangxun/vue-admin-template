@@ -1,24 +1,5 @@
-// 创建views文件夹模块的上下文
+// 获取@/views下所有.vue文件的上下文
 let routesCtx = require.context('@/views', true, /.vue$/)
-
-// 获取实例
-const getComp = route => {
-  let compment = routesCtx(route)
-  return compment.default || compment
-}
-
-// 获取懒加载函数
-const compImport = route => {
-  let path = routesCtx.resolve(route).slice(6)
-  return _ => import(`@/${path}`)
-}
-
-// 判断是否是静态路由
-const isBaseRoutes = route => {
-  let name = getComp(route).name
-  let baseRoutes = ['Home', 'Main', 'NotFound']
-  return baseRoutes.includes(name)
-}
 
 // 主路由
 let Main = [
@@ -30,37 +11,60 @@ let Main = [
   }
 ]
 
-// 生成单层路由
+// 自定义静态路由
+const staticRoutes = ['Home', 'Main', '404']
+
+// 获取文件名
+const getDirName = route => {
+  let sp = route.split('/')
+  let fileName = sp[sp.length - 1]
+  return fileName.substring(0, fileName.length - 4)
+}
+
+// 获取懒加载函数
+const getComponent = route => {
+  let path = route.replace('.', 'views')
+  return _ => import(`@/${path}`)
+}
+
+// 判断是否是静态路由
+const isStatic = route => {
+  return staticRoutes.some(s => route.includes(s))
+}
+
+// 获取实例
+const getVm = route => {
+  return routesCtx(route).default || routesCtx(route)
+}
+
+// 生成一级路由
 let flatRoutes = routesCtx.keys().map(route => {
-  if (isBaseRoutes(route)) return null
-  let comp = getComp(route)
-  if (comp.drother) return null
-  let name = comp.name
-  let component = compImport(route)
-  let title = comp.title || comp.name
-  let hidden = comp.hidden === true
-  let pname = comp.pname || 'Main'
-  return {
-    path: name,
-    name,
-    component,
-    meta: { title, hidden, pname }
-  }
+  let vm = getVm(route)
+  if (isStatic(route)) return false
+  if (vm.drother) return false
+  let name = getDirName(route)
+  let path = name
+  let component = getComponent(route)
+  let title = vm.title || name
+  let hidden = vm.hidden || false
+  let icon = vm.icon || ''
+  let pname = vm.pname || 'Main'
+  return { name, component, path, meta: { title, pname, hidden, icon } }
 }).filter(r => r).concat(Main)
 
-// 单层路由映射
+// 一级路由映射
 let routesMap = {}
 
-// 正式路由
+// 动态路由
 let routes = []
 
-// 遍历单层路由添加子路由并映射
-flatRoutes.forEach(route => {
-  route.children = []
-  routesMap[route.name] = route
+// 添加子元素并映射
+flatRoutes.forEach(r => {
+  routesMap[r.name] = r
+  r.children = []
 })
 
-// 按依赖关系构建路由
+// 生成动态路由
 flatRoutes.forEach(route => {
   if (route.name === 'Main') {
     routes.push(route)

@@ -1,16 +1,15 @@
 <template>
-  <div class="Form">Form</div>
+  <div class="test1">test1</div>
 </template>
 
 <script>
 export default {
-  name: 'Form',
+  name: 'test1',
   data () {
     return {}
   }
 }
 </script>
 
-<style scoped lang="less">
-
+<style scoped>
 </style>

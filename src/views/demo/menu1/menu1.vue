@@ -1,14 +1,14 @@
 <template>
-  <div class="menu2">
-    menu2
+  <div class="menu1">
+    menu1
     <router-view />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'menu2',
-  title: '菜单2',
+  name: 'menu1',
+  icon: 'el-icon-eleme',
   data () {
     return {}
   }

@@ -1,13 +1,10 @@
 <template>
-  <div class="menu1">
-    menu1
-    <router-view />
-  </div>
+  <div class="test2">test2</div>
 </template>
 
 <script>
 export default {
-  name: 'menu1',
+  name: 'test2',
   data () {
     return {}
   }

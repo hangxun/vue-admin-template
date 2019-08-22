@@ -1,0 +1,179 @@
+<template>
+  <el-form
+    ref="form"
+    :model="form"
+    :rules="rules"
+    :labelWidth="labelWidth"
+    :inline="inline"
+    :label-position="labelPosition"
+    :hide-required-asterisk="hideRequiredAsterisk"
+    :size="size"
+    :disabled="disabled"
+  >
+    <template v-for="(item, index) in config">
+      <el-form-item
+        :key="index"
+        v-if="include[index]"
+        :label="item.label"
+        :prop="item.prop"
+      >
+        <slot v-if="item.slot" :name="item.slot" :form="form"></slot>
+        <component v-else :is="`ff-${item.type}`" :form="form" :options="item"></component>
+      </el-form-item>
+    </template>
+    <slot></slot>
+    <el-form-item v-if="isSub || isReset || isCancel">
+      <el-button v-if="isCancel" @click="handleCancel">{{cancelText}}</el-button>
+      <el-button v-if="isSub" type="primary" @click="handleSubmit">{{subText}}</el-button>
+      <el-button v-if="isReset" @click="handleReset">重置</el-button>
+    </el-form-item>
+  </el-form>
+</template>
+
+<script>
+/**
+ *必填
+ * @param form: 表单数据
+ * @param config: 表单配置项
+ *
+ *选填
+ * @param rules: 验证规则
+ * @param labelWidth:表单域标签的宽度
+ * @param inline: 是否使用行内表单模式
+ * @param labelPosition: 表单域标签的位置
+ * @param hideRequiredAsterisk： 是否显示必填字段的标签旁边的红色星号
+ * @param size： 用于控制该表单内组件的尺寸
+ * @param disabled： 是否禁用该表单内的所有组件。若设置为 true，则表单内组件上的 disabled 属性不再生效
+ * @param isSub: 是否显示保存按钮
+ * @param subText: 保存按钮文本
+ * @param isReset: 是否显示重置按钮
+ * @function submit() {} 点击保存校验成功时触发
+ * @function suberror(obj) {} 点击保存校验失败时触发， obj: 未通过校验的字段
+ * @function cancel() {} 点击取消按钮时触发
+ * */
+
+/**
+ * 表单配置项
+ * config:
+ * @param type: checkbox、 date、 input、 radio、 select、 switch
+ * @param prop: form中的属性名
+ * @param label： 标签文本
+ * @param placeholder： 输入框占位文本
+ * @param slot: 具名插槽name
+ *
+ *
+ * 部分组件特有参数
+ * checkbox、 radio、 select
+ * @param opts： select、 radio、 checkbox中的选项数组，[{ value: '', label: '' }], 默认属性名value、label, 可在props中修改
+ * @param props： 指定选项的值为选项对象的某个属性值{ value: 'newValue', label: 'newLabel' }
+ *
+ * date
+ * @param tp: 类型， 可选 year/month/date/dates/ week/datetime/datetimerange/ daterange/monthrange
+ * @param format: 显示在输入框中的格式
+ * @param valueFormat: 绑定值的格式
+ * @param startPlaceholder： 范围选择时开始日期的占位内容
+ * @param endPlaceholder：范围选择时结束日期的占位内容
+ * @param rangeSeparator：选择范围时的分隔符
+ * @param readonly： 完全只读
+ * @param editable: 文本框是否可输入
+ *
+ *
+ * input
+ * @param tp: 类型， 可选 text，textarea 和其他 原生 input 的 type 值
+ * @param readonly： 完全只读
+ * */
+
+import components from './comps/index.js'
+export default {
+  name: 'ff-form',
+  components,
+  props: {
+    form: {
+      type: Object,
+      required: true
+    },
+    config: {
+      type: Array,
+      default: _ => []
+    },
+    rules: {
+      type: Object,
+      default: _ => ({})
+    },
+    labelWidth: {
+      type: String,
+      default: '80px'
+    },
+    inline: {
+      type: Boolean,
+      default: false
+    },
+    hideRequiredAsterisk: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    labelPosition: {
+      type: String,
+      default: 'right'
+    },
+    size: {
+      type: String,
+      default: 'medium'
+    },
+    isSub: {
+      type: Boolean,
+      default: false
+    },
+    subText: {
+      type: String,
+      default: '保存'
+    },
+    isReset: {
+      type: Boolean,
+      default: false
+    },
+    isCancel: {
+      type: Boolean,
+      default: false
+    },
+    cancelText: {
+      type: String,
+      default: '取消'
+    }
+  },
+  data () {
+    return {
+    }
+  },
+  computed: {
+    include () {
+      return this.config.map(c => Boolean(c.slot) || components[`ff-${c.type}`])
+    }
+  },
+  methods: {
+    handleSubmit () {
+      this.$refs.form.validate((valid, obj) => {
+        if (valid) {
+          this.$emit('submit')
+        } else {
+          this.$emit('suberror', obj)
+          return false
+        }
+      })
+    },
+    handleReset () {
+      this.$refs.form.resetFields()
+    },
+    handleCancel () {
+      this.$emit('cancel')
+    }
+  }
+}
+</script>
+
+<style scoped>
+</style>
