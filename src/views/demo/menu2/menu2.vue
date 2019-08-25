@@ -12,7 +12,9 @@
       @submit="handleSub"
       @suberror="suberror"
     >
-      <span slot="slot" slot-scope="{ form }">{{form.slot}}</span>
+      <template #slot="{ form }">
+          {{form.slot}}
+      </template>
     </ff-form>
     <router-view />
   </div>
