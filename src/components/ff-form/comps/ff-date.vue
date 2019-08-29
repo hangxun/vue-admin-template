@@ -66,7 +66,7 @@ export default {
       }
     },
     valueFormat () {
-      return this.options.format || 'yyyy-MM-dd'
+      return this.options.valueFormat || 'yyyy-MM-dd'
     }
   }
 }

@@ -4,6 +4,7 @@
     <ff-table
       :data="data"
       :titles="titles"
+      @row-click="rowClick"
     >
       <template #aaa="{ row }">
           {{row.a}}
@@ -53,6 +54,9 @@ export default {
     },
     resetCurrent () {
       this.current = -1
+    },
+    rowClick (row, column, event) {
+      console.log(row, column, event)
     }
   }
 }

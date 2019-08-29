@@ -14,26 +14,26 @@
 <script>
 /**
  * 必填
- * @param navs: 导航数据
- * [
- *  {path: '', name: '', meta: { title: '', hidden: false }}
- * ]
+ * @param {Array} navs 导航数据
  * *
  * 选填
- * @param mode: 模式, horizontal: 横向, vertical: 纵向
- * @param isRoute: 是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 name 进行路由跳转
- * @param bc: 菜单的背景色（仅支持 hex 格式）
- * @param tc: 菜单的文字颜色（仅支持 hex 格式）
- * @param atc: 当前激活菜单的文字颜色（仅支持 hex 格式）
- * @function select(index, indexPath) {}: 菜单激活回调, index: 选中菜单项的 index, indexPath: 选中菜单项的 index path
+ * @param {string} mode 模式, horizontal: 横向, vertical: 纵向
+ * @param {boolean} isRoute 是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 name 进行路由跳转
+ * @param {string} bc 菜单的背景色（仅支持 hex 格式）
+ * @param {string} tc 菜单的文字颜色（仅支持 hex 格式）
+ * @param {string} atc 当前激活菜单的文字颜色（仅支持 hex 格式）
+ * *
+ * @function select 菜单激活回调
+ * @param index 选中菜单项的 index
+ * @param indexPath 选中菜单项的 index path
 * */
 
 /**
  * 导航数据
  * navs
- * @param path: 唯一标识
- * @param name: 导航跳转的路由name,
- * @params meta: 其他信息； title: 显示的标题，没有的话取name值； hidden: 是否在菜单中隐藏
+ * @param {string} path 唯一标识
+ * @param {string} name 导航跳转的路由name,
+ * @param {Object} meta 其他信息； { title: 显示的标题，没有的话取name值； hidden: 是否在菜单中隐藏 }
  * */
 export default {
   name: 'ffMenu',
