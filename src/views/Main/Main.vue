@@ -22,7 +22,6 @@ export default {
 <style scoped lang="less">
   .Main {
     width: 100%;
-    min-width: 1200px;
     display: flex;
     .nav {
       width: 201px;

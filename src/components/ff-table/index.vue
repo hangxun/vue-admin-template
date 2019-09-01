@@ -20,7 +20,7 @@
         :key="idx"
         :align="item.align || 'center'"
         :label="item.label"
-        :min-width="item.width || 120">
+        :min-width="item.width || 50">
         <template v-slot="scope">
           <render v-if="item.render" :key="idx" :render="item.render" :row="scope.row" :column="item" :index="getIndex(scope.row)"></render>
         </template>
@@ -30,7 +30,7 @@
         :key="idx"
         :align="item.align || 'center'"
         :label="item.label"
-        :min-width="item.width || 120">
+        :min-width="item.width || 50">
         <template v-slot="scope">
           <slot :name="item.slot" :row="scope.row"></slot>
         </template>
@@ -41,10 +41,10 @@
           :align="item.align || 'center'"
           :prop="item.prop"
           :label="item.label"
-          :min-width="item.width || 120">
+          :min-width="item.width || 50">
           <template v-slot="scope">
             <template v-if="checkVal(scope.row[item.prop])">{{placeholder}}</template>
-            <template v-else>scope.row[item.prop]</template>
+            <template v-else>{{scope.row[item.prop]}}</template>
           </template>
         </el-table-column>
       </template>
@@ -53,7 +53,7 @@
       v-if="isAdd || isEdit || isLook || isDel"
       align="center"
       label="操作"
-      min-width="120">
+      min-width="50">
       <template v-slot="scope">
         <slot name="handlerBefore"></slot>
         <el-button type="text" v-if="isAdd" icon="el-icon-plus" @click.stop="handleAdd(scope.row)"></el-button>
@@ -108,7 +108,7 @@
  * titles
  * @param {string} label 显示的标题
  * @param {string} prop 对应列内容的字段名，也可以使用 property 属性
- * @param {string} width 对应列的最小宽度，默认120px, 与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列
+ * @param {string} width 对应列的最小宽度，默认50px, 与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列
  * @param {string} slot 自定义列的插槽名
  * @param {string} align： 对齐方式  left/center/right  默认center
  * @param {function} render 自定义渲染列(使用render会覆盖slot)， 使用 Vue 的 Render 函数。接受4个参数 (h, row, column, index)。row、column、index，分别指当前行数据，当前列数据，当前是第几行
