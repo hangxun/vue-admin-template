@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'ff-switch',
+  name: 'FfSwitch',
   props: {
     form: {
       type: Object,

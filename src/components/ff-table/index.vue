@@ -129,7 +129,7 @@
  * handlerAfter 操作栏后置内容
  * */
 export default {
-  name: 'ffTable',
+  name: 'FfTable',
   components: {
     render: _ => import('./render')
   },

@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'ff-select',
+  name: 'FfSelect',
   props: {
     form: {
       type: Object,

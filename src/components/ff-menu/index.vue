@@ -36,7 +36,7 @@
  * @param {Object} meta 其他信息； { title: 显示的标题，没有的话取name值； hidden: 是否在菜单中隐藏 }
  * */
 export default {
-  name: 'ffMenu',
+  name: 'FfMenu',
   components: {
     'subMenu': _ => import('./subMeun')
   },

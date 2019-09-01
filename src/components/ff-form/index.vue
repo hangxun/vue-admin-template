@@ -10,7 +10,7 @@
     :size="size"
     :disabled="disabled"
   >
-    <template v-for="(item, index) in config">
+    <template v-for="(item, index) in haveNameConfig">
       <el-form-item
         :key="index"
         v-if="include[index]"
@@ -18,7 +18,7 @@
         :prop="item.prop"
       >
         <slot v-if="item.slot" :name="item.slot" :form="form"></slot>
-        <component v-else :is="`ff-${item.type}`" :form="form" :options="item"></component>
+        <component v-else :is="item.componentName" :form="form" :options="item"></component>
       </el-form-item>
     </template>
     <slot></slot>
@@ -87,8 +87,9 @@
  * */
 
 import components from './comps/index.js'
+import upperFirst from 'lodash/upperFirst'
 export default {
-  name: 'ff-form',
+  name: 'FfForm',
   components,
   props: {
     form: {
@@ -154,7 +155,17 @@ export default {
   },
   computed: {
     include () {
-      return this.config.map(c => Boolean(c.slot) || components[`ff-${c.type}`])
+      return this.config.map(c => Boolean(c.slot) || components[c.componentName])
+    },
+    haveNameConfig () {
+      let config = this.config
+      config.forEach(c => {
+        if (c.type) {
+          let componentName = 'Ff' + upperFirst(c.type)
+          c.componentName = componentName
+        }
+      })
+      return config
     }
   },
   methods: {

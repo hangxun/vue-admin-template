@@ -3,7 +3,7 @@ import axios from 'axios'
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.VUE_APP_baseURL,
-  timeout: 5000, // 请求超时时间
+  timeout: 5000,
   headers: {
     'Content-type': 'application/json'
   },

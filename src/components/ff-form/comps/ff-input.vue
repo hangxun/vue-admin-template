@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: 'ff-input',
+  name: 'FfInput',
   props: {
     form: {
       type: Object,

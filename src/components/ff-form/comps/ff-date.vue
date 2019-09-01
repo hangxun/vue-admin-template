@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'ff-date',
+  name: 'FfDate',
   props: {
     form: {
       type: Object,

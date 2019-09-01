@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'ff-radio',
+  name: 'FfRadio',
   props: {
     form: {
       type: Object,

@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'ff-checkbox',
+  name: 'FfCheckbox',
   props: {
     form: {
       type: Object,
