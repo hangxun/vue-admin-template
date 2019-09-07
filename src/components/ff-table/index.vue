@@ -55,12 +55,12 @@
       label="操作"
       min-width="50">
       <template v-slot="scope">
-        <slot name="handlerBefore"></slot>
+        <slot name="btnPrepend" :row="scope.row"></slot>
         <el-button type="text" v-if="isAdd" icon="el-icon-plus" @click.stop="handleAdd(scope.row)"></el-button>
-        <el-button class="centerBtn" type="text" v-if="isEdit" icon="el-icon-edit" @click.stop="handleEdit(scope.row)"></el-button>
-        <el-button type="text" v-if="isLook" icon="el-icon-view" @click.stop="handleLook(scope.row)"></el-button>
+        <el-button class="centerBtn" type="text" v-if="isEdit" icon="el-icon-edit-outline" @click.stop="handleEdit(scope.row)"></el-button>
+        <el-button type="text" v-if="isLook" icon="el-icon-document" @click.stop="handleLook(scope.row)"></el-button>
         <el-button type="text" v-if="isDel" icon="el-icon-delete" @click.stop="handleDel(scope.row)"></el-button>
-        <slot name="handlerAfter" :row="scope.row"></slot>
+        <slot name="btnAppend" :row="scope.row"></slot>
       </template>
     </el-table-column>
   </el-table>
@@ -69,7 +69,7 @@
 <script>
 /**
  * 必填
- * @param {Array} titles 表头数据, [{ label: '', prop: '', width: '', slot: '', align: '', render: null }]
+ * @param {Array} titles 表头数据
  * @param {Array} data 表格显示的数据
  *
  * 选填
@@ -109,11 +109,9 @@
  * @param {string} label 显示的标题
  * @param {string} prop 对应列内容的字段名，也可以使用 property 属性
  * @param {string} width 对应列的最小宽度，默认50px, 与 width 的区别是 width 是固定的，min-width 会把剩余宽度按比例分配给设置了 min-width 的列
- * @param {string} slot 自定义列的插槽名
+ * @param {string} slot 自定义列的插槽名, 参数为{ row }
  * @param {string} align： 对齐方式  left/center/right  默认center
  * @param {function} render 自定义渲染列(使用render会覆盖slot)， 使用 Vue 的 Render 函数。接受4个参数 (h, row, column, index)。row、column、index，分别指当前行数据，当前列数据，当前是第几行
- *
- * @param {string} slot 插槽名, 参数为{ row }
  * */
 
 /**
@@ -125,8 +123,8 @@
  * @param del 删除按钮
  *
  * 操作栏扩展插槽
- * handlerBefore 操作栏前置内容
- * handlerAfter 操作栏后置内容
+ * btnPrepend 操作栏前置内容
+ * btnAppend 操作栏后置内容
  * */
 export default {
   name: 'FfTable',
@@ -192,7 +190,7 @@ export default {
       }
     },
     selectionChange (selection) {
-      this.$emit('selection-change', selection)
+      this.$emit('selectionChange', selection)
     },
     handleCurrentChange (row) {
       this.$emit('currentChange', row)

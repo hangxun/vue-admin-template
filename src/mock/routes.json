@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "name": "menu1",
+      "pname": "",
+      "title": "菜单一",
+      "icon": "el-icon-help",
+      "hidden": false,
+      "id": 1
+    },
+    {
+      "name": "menu2",
+      "pname": "",
+      "title": "菜单二",
+      "icon": "el-icon-picture-outline-round",
+      "hidden": false,
+      "id": 2
+    },
+    {
+      "name": "menu1-1",
+      "pname": "menu1",
+      "title": "1-1",
+      "icon": "",
+      "hidden": false,
+      "id": 3
+    },
+    {
+      "name": "menu1-2",
+      "pname": "menu1",
+      "title": "1-2",
+      "icon": "",
+      "hidden": false,
+      "id": 4
+    },
+    {
+      "name": "menu3",
+      "pname": "",
+      "title": "m3",
+      "icon": "",
+      "hidden": true,
+      "id": 5
+    },
+    {
+      "name": "asd",
+      "pname": "",
+      "title": "dsa",
+      "icon": "",
+      "hidden": false,
+      "id": 6
+    }
+  ]
+}

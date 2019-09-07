@@ -1,33 +1,35 @@
 <template>
-  <el-form
-    ref="form"
-    :model="form"
-    :rules="rules"
-    :labelWidth="labelWidth"
-    :inline="inline"
-    :label-position="labelPosition"
-    :hide-required-asterisk="hideRequiredAsterisk"
-    :size="size"
-    :disabled="disabled"
-  >
-    <template v-for="(item, index) in haveNameConfig">
-      <el-form-item
-        :key="index"
-        v-if="include[index]"
-        :label="item.label"
-        :prop="item.prop"
-      >
-        <slot v-if="item.slot" :name="item.slot" :form="form"></slot>
-        <component v-else :is="item.componentName" :form="form" :options="item"></component>
-      </el-form-item>
-    </template>
-    <slot></slot>
-    <el-form-item v-if="isSub || isReset || isCancel">
+  <div class="ff-form">
+    <el-form
+      ref="form"
+      :model="form"
+      :rules="rules"
+      :labelWidth="labelWidth"
+      :inline="inline"
+      :label-position="labelPosition"
+      :hide-required-asterisk="hideRequiredAsterisk"
+      :size="size"
+      :disabled="disabled"
+    >
+      <template v-for="(item, index) in haveNameConfig">
+        <el-form-item
+          :key="index"
+          v-if="include[index]"
+          :label="item.label"
+          :prop="item.prop"
+        >
+          <slot v-if="item.slot" :name="item.slot" :form="form"></slot>
+          <component v-else :is="item.componentName" :form="form" :options="item"></component>
+        </el-form-item>
+      </template>
+      <slot></slot>
+    </el-form>
+    <div class="btn-item" v-if="isSub || isReset || isCancel" label-width="0" style="text-align: center;">
       <el-button v-if="isCancel" @click="handleCancel">{{cancelText}}</el-button>
+      <el-button v-if="isReset" @click="handleReset">{{resetText}}</el-button>
       <el-button v-if="isSub" type="primary" @click="handleSubmit">{{subText}}</el-button>
-      <el-button v-if="isReset" @click="handleReset">重置</el-button>
-    </el-form-item>
-  </el-form>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -45,9 +47,14 @@
  * @param {string} size 用于控制该表单内组件的尺寸
  * @param {boolean} disabled 是否禁用该表单内的所有组件。若设置为 true，则表单内组件上的 disabled 属性不再生效
  * @param {boolean} isSub 是否显示保存按钮
+ * @param {boolean} isReset 是否显示重置按钮
+ * @param {boolean} isCancel 是否显示取消按钮
  * @param {string} subText 保存按钮文本
- * @param isReset 是否显示重置按钮
+ * @param {string} resetText 保存按钮文本
+ * @param {string} cancelText 取消按钮文本
  * @function submit 点击保存校验成功时触发
+ * @function reset 点击重置按钮时触发
+ * @function cancel 点击重置按钮时触发
  * *
  * @function suberror 点击保存校验失败时触发，
  * @param errData 未通过校验的信息
@@ -82,7 +89,7 @@
  *
  *
  * input
- * @param {string} tp 类型， 可选 text，textarea 和其他 原生 input 的 type 值
+ * @param {string} tp 类型， 可选 text，textarea, password 和其他 原生 input 的 type 值
  * @param {boolean} readonly 完全只读
  * */
 
@@ -136,6 +143,10 @@ export default {
       type: String,
       default: '保存'
     },
+    resetText: {
+      type: String,
+      default: '重置'
+    },
     isReset: {
       type: Boolean,
       default: false
@@ -151,6 +162,7 @@ export default {
   },
   data () {
     return {
+      initForm: {}
     }
   },
   computed: {
@@ -168,19 +180,34 @@ export default {
       return config
     }
   },
+  created () {
+    this.initForm = this._cloneDeep(this.form)
+  },
   methods: {
+    _resetForm () {
+      this.$refs.form.resetFields()
+    },
+    _validate () {
+      return new Promise((resolve, reject) => {
+        this.$refs.form.validate((valid, errData) => {
+          if (valid) {
+            resolve()
+          } else {
+            reject(errData)
+          }
+        })
+      })
+    },
     handleSubmit () {
-      this.$refs.form.validate((valid, errData) => {
-        if (valid) {
-          this.$emit('submit')
-        } else {
-          this.$emit('suberror', errData)
-          return false
-        }
+      this._validate().then(_ => {
+        this.$emit('submit')
+      }).catch(errData => {
+        this.$emit('suberror', errData)
       })
     },
     handleReset () {
-      this.$refs.form.resetFields()
+      this._resetForm()
+      this.$emit('reset')
     },
     handleCancel () {
       this.$emit('cancel')

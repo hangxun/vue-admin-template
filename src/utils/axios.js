@@ -1,8 +1,15 @@
 import axios from 'axios'
+import { Message } from 'element-ui'
+
+const baseUrlObj = {
+  development: '//localhost:3000',
+  production: '//localhost:3000',
+  test: '//localhost:3000'
+}
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_baseURL,
+  baseURL: baseUrlObj[process.env.VUE_APP_ENV],
   timeout: 5000,
   headers: {
     'Content-type': 'application/json'
@@ -34,6 +41,7 @@ service.interceptors.response.use(
     if (response.data.code === 200) {
       return response
     } else {
+      Message.error(response.data.message)
       return Promise.reject(response)
     }
   },

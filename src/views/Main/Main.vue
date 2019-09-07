@@ -8,12 +8,15 @@
 </template>
 
 <script>
-import dinyRoutes from '@/utils/addRoutes'
 export default {
   name: 'Main',
   data () {
     return {
-      navs: dinyRoutes[0].children
+    }
+  },
+  computed: {
+    navs () {
+      return this.$store.getters.menus
     }
   }
 }

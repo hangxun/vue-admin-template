@@ -1,15 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import dinyRoutes from '@/utils/addRoutes'
+import store from '@/store'
+// eslint-disable-next-line no-unused-vars
+import FormatRouter from '@/utils/addRoutes-server'
+
+const { routes } = store.state
 
 Vue.use(Router)
 
 const router = new Router({
-  // mode: 'history',
+  mode: 'history',
   routes: [
     { path: '/', name: 'Home', component: _ => import('@/views/Home/Home'), meta: { title: 'Home' } },
-    { path: '/404', component: _ => import('@/views/404/NotFound'), meta: { title: '404' } },
-    { path: '*', redirect: '/404' }
+    { path: '/routerSetting', name: 'routerSetting', component: _ => import('@/views/routerSetting/routerSetting'), meta: { title: '路由配置' } },
+    { path: '/404', component: _ => import('@/views/404/NotFound'), meta: { title: '404' } }
   ],
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
@@ -20,9 +24,12 @@ const router = new Router({
   }
 })
 
-router.addRoutes(dinyRoutes)
+if (routes.length) {
+  let asyncRoutes = new FormatRouter(routes).routes
+  router.addRoutes(asyncRoutes)
+}
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   let title = to.meta.title
   if (title) document.title = title
   next()
