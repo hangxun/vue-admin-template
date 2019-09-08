@@ -17,6 +17,7 @@
           v-if="include[index]"
           :label="item.label"
           :prop="item.prop"
+          :label-width="item.labelWidth"
         >
           <slot v-if="item.slot" :name="item.slot" :form="form"></slot>
           <component v-else :is="item.componentName" :form="form" :options="item"></component>
@@ -69,6 +70,7 @@
  * @param {string} prop form中的属性名
  * @param {string} label 标签文本
  * @param {string} placeholder 输入框占位文本
+ * @param {string} labelWidth 当前表单域标签的宽度
  * @param {string} slot 具名插槽name
  *
  *
