@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
-import FormatRouter from '@/utils/addRoutes-server'
+import FormatRouter from '@/utils/addRoutes'
 import { getRoutes } from '@/api/requestRoutes'
 import router from '@/router'
 

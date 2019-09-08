@@ -20,10 +20,10 @@
       </template>
     </ff-table>
     <el-dialog
+      v-if="dialogVisible"
       title="提示"
       :visible.sync="dialogVisible"
       width="30%"
-      :before-close="handleClose"
       >
       <ff-form
         ref="routerForm"
@@ -32,10 +32,11 @@
         :rules="rules"
         :disabled="type === 3"
         :isSub="type !== 3"
-        isReset
-        :resetText="type === 3 ? '关闭' : '取消'"
+        isCancel
+        :cancelText="type === 3 ? '关闭' : '取消'"
+        labelWidth="130px"
         @submit="handleSubmit"
-        @reset="dialogVisible = false"
+        @cancel="dialogVisible = false"
       >
         <template #icon="{ form }">
           <el-radio-group v-model="form.icon">
@@ -55,17 +56,16 @@
 
 <script>
 import { getRoutes, addRoute, delRotue, getRoute, editRoute } from '@/api/requestRoutes'
-let initForm = {}
 export default {
   name: 'routerSetting',
   data () {
     return {
       titles: [
-        { prop: 'name', label: 'name' },
-        { prop: 'pname', label: 'pname' },
-        { prop: 'title', label: 'title' },
-        { prop: 'icon', label: 'icon', slot: 'icon' },
-        { prop: 'hidden', label: 'hidden' }
+        { prop: 'name', label: '路由name' },
+        { prop: 'pname', label: '父路由name' },
+        { prop: 'title', label: '标题' },
+        { prop: 'icon', label: '图标', slot: 'icon' },
+        { prop: 'hidden', label: '是否在菜单中隐藏' }
       ],
       handler: ['add', 'edit', 'look', 'del'],
       data: [],
@@ -80,11 +80,12 @@ export default {
         hidden: false
       },
       config: [
-        { type: 'input', prop: 'name', label: 'name', placeholder: '请输入name' },
-        { type: 'input', prop: 'pname', label: 'pname', placeholder: '请输入pname' },
-        { type: 'input', prop: 'title', label: 'title', placeholder: '请输入title' },
-        { prop: 'icon', label: 'icon', slot: 'icon' },
-        { type: 'switch', prop: 'hidden', label: 'hidden', placeholder: '请输入hidden' }
+        { type: 'input', prop: 'name', label: '路由name', placeholder: '请输入路由name' },
+        { type: 'input', prop: 'pname', label: '父路由name', placeholder: '请输入父路由name' },
+        { type: 'input', prop: 'title', label: '标题', placeholder: '请输入标题' },
+        { type: 'input', prop: 'icon', label: '图标', placeholder: '请输入图标class' },
+        // { prop: 'icon', label: '图标', slot: 'icon' },
+        { type: 'switch', prop: 'hidden', label: '是否在菜单中隐藏', placeholder: '请输入hidden' }
       ],
       rules: {
         name: [
@@ -95,11 +96,6 @@ export default {
   },
   created () {
     this.getRoutes()
-    this.dialogVisible = !this.dialogVisible
-    this.$nextTick(_ => {
-      this.dialogVisible = !this.dialogVisible
-      initForm = this._cloneDeep(this.$refs.routerForm.initForm)
-    })
   },
   methods: {
     async getRoutes () {
@@ -118,7 +114,6 @@ export default {
       }
       this.getRoutes()
       this.dialogVisible = !this.dialogVisible
-      this.form = this._cloneDeep(initForm)
     },
     handleAdd (row) {
       this.type = 1
@@ -155,10 +150,6 @@ export default {
     },
     selectionChange (selection) {
       this.selection = selection
-    },
-    handleClose (done) {
-      this.form = this._cloneDeep(initForm)
-      done()
     }
   }
 }

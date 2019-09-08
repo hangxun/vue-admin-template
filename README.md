@@ -25,6 +25,16 @@ yarn test
 yarn lint
 ```
 
+### 开启json-server(需先安装json-server及nodemon)
+```
+yarn json
+```
+
+### yarn serve + yarn json同时启动(需先安装concurrently)
+```
+yarn dev
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
@@ -51,23 +61,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
     
 ### 路由配置
 路由分为静态路由和动态路由，静态路由为router/index.js中配置的Home和404页面。
-动态路由通过utils/addRoutes.js直接读取views下所有的.vue文件并生成路由数据，动态添加。
+动态路由通过utils/addRoutes.js直接读取views下所有的.vue文件并配合mock/routes.json生成路由数据，动态添加。
+路由可在routes.json中配置也可在views/routerSetting/routerSetting.vue中配置
 
-#### 动态路由组件配置
-```
-export default {
-  name: string,
-  title: string,
-  pname: string，
-  drother： boolean,
-  hidden: boolean
-}
-```
-* name: 组件名
-* title: 路由标题，ff-menu中显示的文字，若不填则显示name
-* pname: 父组件名，不填默认Main
-* drother: 默认false，若为true则不加载此路由 
-* hidden: 是否在ff-menu中显示 
-
-    
-    

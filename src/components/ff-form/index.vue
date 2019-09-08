@@ -25,10 +25,12 @@
       </template>
       <slot></slot>
     </el-form>
-    <div class="btn-item" v-if="isSub || isReset || isCancel" label-width="0" style="text-align: center;">
-      <el-button v-if="isCancel" @click="handleCancel">{{cancelText}}</el-button>
-      <el-button v-if="isReset" @click="handleReset">{{resetText}}</el-button>
-      <el-button v-if="isSub" type="primary" @click="handleSubmit">{{subText}}</el-button>
+    <div class="btn-item" v-if="isSub || isReset || isCancel" label-width="0">
+      <slot name="btnPrepend"></slot>
+      <el-button :size="size" v-if="isCancel" @click="handleCancel">{{cancelText}}</el-button>
+      <el-button :size="size" v-if="isReset" @click="handleReset">{{resetText}}</el-button>
+      <el-button :size="size" v-if="isSub" type="primary" @click="handleSubmit">{{subText}}</el-button>
+      <slot name="btnAppend"></slot>
     </div>
   </div>
 </template>
@@ -55,7 +57,7 @@
  * @param {string} cancelText 取消按钮文本
  * @function submit 点击保存校验成功时触发
  * @function reset 点击重置按钮时触发
- * @function cancel 点击重置按钮时触发
+ * @function cancel 点击取消按钮时触发
  * *
  * @function suberror 点击保存校验失败时触发，
  * @param errData 未通过校验的信息
@@ -93,6 +95,11 @@
  * input
  * @param {string} tp 类型， 可选 text，textarea, password 和其他 原生 input 的 type 值
  * @param {boolean} readonly 完全只读
+ *
+ *
+ * slot
+ * btnPrepend 在按钮栏内前插入
+ * btnAppend 在按钮栏内后插入
  * */
 
 import components from './comps/index.js'
@@ -200,6 +207,9 @@ export default {
         })
       })
     },
+    _clearValidate (props) {
+      this.$refs.form.clearValidate(props)
+    },
     handleSubmit () {
       this._validate().then(_ => {
         this.$emit('submit')
@@ -218,5 +228,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+  .btn-item {
+    text-align: center;
+  }
 </style>
