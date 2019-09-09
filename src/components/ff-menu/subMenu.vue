@@ -4,7 +4,7 @@
       <i v-if="sub.meta && sub.meta.icon" :class="sub.meta.icon"></i>
       {{sub.meta && sub.meta.title || sub.name}}
     </template>
-    <subMeun v-for="ch in sub.children" :key="ch.path" :sub="ch"></subMeun>
+    <subMenu v-for="ch in sub.children" :key="ch.path" :sub="ch"></subMenu>
   </el-submenu>
   <el-menu-item v-else :index="sub.name">
     <i v-if="sub.meta && sub.meta.icon" :class="sub.meta.icon"></i>
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: 'subMeun',
+  name: 'subMenu',
   props: {
     sub: {
       type: Object,

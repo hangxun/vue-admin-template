@@ -12,8 +12,7 @@ let Main = _ => {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-let NotFound = { path: '/404', component: _ => import('@/views/404/NotFound') }
+let NotFound = { path: '404', component: _ => import('@/views/404/NotFound') }
 
 class FormatRouter {
   constructor (serverRoutes) {

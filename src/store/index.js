@@ -11,27 +11,23 @@ const vuexLocal = new VuexPersistence({
   storage: window.sessionStorage,
   reducer: state => {
     return {
-      routes: state.routes
+      routes: state.routes,
+      menus: state.menus
     }
   }
 })
 
 export default new Vuex.Store({
   state: {
-    routes: []
-  },
-  getters: {
-    menus (state) {
-      if (state.routes.length) {
-        return new FormatRouter(state.routes).routes[0].children
-      } else {
-        return []
-      }
-    }
+    routes: [],
+    menus: []
   },
   mutations: {
     setRoutes (state, routes) {
       state.routes = routes
+    },
+    setMenus (state, menus) {
+      state.menus = menus
     }
   },
   actions: {
@@ -40,6 +36,7 @@ export default new Vuex.Store({
       let routes = new FormatRouter(data).routes
       router.addRoutes(routes)
       commit('setRoutes', data)
+      commit('setMenus', routes[0].children)
     }
   },
   plugins: [vuexLocal.plugin]
