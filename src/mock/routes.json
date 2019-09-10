@@ -47,14 +47,6 @@
       "icon": "",
       "hidden": false,
       "id": 6
-    },
-    {
-      "name": "routerSetting",
-      "pname": "",
-      "title": "路由设置",
-      "icon": "el-icon-setting",
-      "hidden": false,
-      "id": 7
     }
   ]
 }

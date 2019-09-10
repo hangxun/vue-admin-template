@@ -39,6 +39,7 @@ export default {
   name: 'FfMenu',
   components: {
     'subMenu': _ => import('./subMenu')
+    // 'subMenuRender': _ => import('./subMenuRender')
   },
   props: {
     navs: {

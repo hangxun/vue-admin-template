@@ -12,7 +12,7 @@ const router = new Router({
   mode: 'history',
   routes: [
     { path: '/', name: 'Home', component: _ => import('@/views/Home/Home'), meta: { title: 'Home' } },
-    // { path: '/routerSetting', name: 'routerSetting', component: _ => import('@/views/routerSetting/routerSetting'), meta: { title: '路由配置' } },
+    { path: '/routerSetting', name: 'routerSetting', component: _ => import('@/views/routerSetting/routerSetting'), meta: { title: '路由配置' } },
     { path: '/404', component: _ => import('@/views/404/NotFound'), meta: { title: '404' } },
     { path: '*', redirect: '/404' }
   ],
