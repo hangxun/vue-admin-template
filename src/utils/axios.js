@@ -38,10 +38,11 @@ service.interceptors.response.use(
     /**
      * code为非200是抛错
      */
+    let message = response.data.message
     if (response.data.code === 200) {
       return response
     } else {
-      Message.error(response.data.message)
+      message && Message.error(message)
       return Promise.reject(response)
     }
   },

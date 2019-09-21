@@ -18,6 +18,7 @@
           :label="item.label"
           :prop="item.prop"
           :label-width="item.labelWidth"
+          :rules="item.rules"
         >
           <slot v-if="item.slot" :name="item.slot" :form="form"></slot>
           <component v-else :is="item.componentName" :form="form" :options="item"></component>
@@ -27,9 +28,9 @@
     </el-form>
     <div class="btn-item" v-if="isSub || isReset || isCancel" label-width="0">
       <slot name="btnPrepend"></slot>
-      <el-button :size="size" v-if="isCancel" @click="handleCancel">{{cancelText}}</el-button>
-      <el-button :size="size" v-if="isReset" @click="handleReset">{{resetText}}</el-button>
-      <el-button :size="size" v-if="isSub" type="primary" @click="handleSubmit">{{subText}}</el-button>
+      <el-button :size="size" v-if="isCancel" @click="_handleCancel">{{cancelText}}</el-button>
+      <el-button :size="size" v-if="isReset" @click="_handleReset">{{resetText}}</el-button>
+      <el-button :size="size" v-if="isSub" type="primary" @click="_handleSubmit">{{subText}}</el-button>
       <slot name="btnAppend"></slot>
     </div>
   </div>
@@ -66,6 +67,13 @@
  * */
 
 /**
+ * Methods
+ * resetFields 对整个表单进行重置，将所有字段值重置为初始值并移除校验结果
+ * validate 对整个表单进行校验的方法
+ * clearValidateate 移除表单项的校验结果。传入待移除的表单项的 prop 属性或者 prop 组成的数组，如不传则移除整个表单的校验结果
+ * */
+
+/**
  * 表单配置项
  * config
  * @param {string} type checkbox、 date、 input、 radio、 select、 switch
@@ -73,6 +81,7 @@
  * @param {string} label 标签文本
  * @param {string} placeholder 输入框占位文本
  * @param {string} labelWidth 当前表单域标签的宽度
+ * @param {object} rules 表单验证规则
  * @param {string} slot 具名插槽name
  *
  *
@@ -98,8 +107,8 @@
  *
  *
  * slot
- * btnPrepend 在按钮栏内前插入
- * btnAppend 在按钮栏内后插入
+ * btnPrepend 在按钮栏内容前插入
+ * btnAppend 在按钮栏内容后插入
  * */
 
 import components from './comps/index.js'
@@ -169,11 +178,6 @@ export default {
       default: '取消'
     }
   },
-  data () {
-    return {
-      initForm: {}
-    }
-  },
   computed: {
     include () {
       return this.config.map(c => Boolean(c.slot) || components[c.componentName])
@@ -189,14 +193,11 @@ export default {
       return config
     }
   },
-  created () {
-    this.initForm = this._cloneDeep(this.form)
-  },
   methods: {
-    _resetForm () {
+    resetFields () {
       this.$refs.form.resetFields()
     },
-    _validate () {
+    validate () {
       return new Promise((resolve, reject) => {
         this.$refs.form.validate((valid, errData) => {
           if (valid) {
@@ -207,21 +208,21 @@ export default {
         })
       })
     },
-    _clearValidate (props) {
-      this.$refs.form.clearValidate(props)
+    clearValidateate (...props) {
+      this.$refs.form.clearValidate(...props)
     },
-    handleSubmit () {
-      this._validate().then(_ => {
+    _handleSubmit () {
+      this.validate().then(_ => {
         this.$emit('submit')
       }).catch(errData => {
         this.$emit('suberror', errData)
       })
     },
-    handleReset () {
-      this._resetForm()
+    _handleReset () {
+      this.resetFields()
       this.$emit('reset')
     },
-    handleCancel () {
+    _handleCancel () {
       this.$emit('cancel')
     }
   }

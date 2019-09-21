@@ -1,11 +1,17 @@
-import _cloneDeep from 'lodash/cloneDeep'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   install (Vue) {
     Vue.mixin({
       methods: {
-        async _request (fn, params, msg = false) {
-          let data = await fn(params)
+        async $_request (fn, params, msg = false) {
+          let data
+          if (typeof params === 'boolean') {
+            msg = params
+            data = await fn()
+          } else {
+            data = await fn(params)
+          }
           if (msg) {
             let message = msg === true ? data.message : msg
             this.$message({
@@ -15,7 +21,7 @@ export default {
           }
           return data
         },
-        _delConfirm (thenFn, catchFn) {
+        $_delConfirm (thenFn, catchFn) {
           this.$confirm('是否确认删除?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -26,7 +32,7 @@ export default {
             catchFn && catchFn()
           })
         },
-        _cloneDeep
+        $_copy: cloneDeep
       }
     })
   }

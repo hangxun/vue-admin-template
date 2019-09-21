@@ -5,9 +5,9 @@ let routesCtx = require.context('@/views', true, /.vue$/)
 let Main = _ => {
   return {
     path: '/main',
-    name: 'Main',
+    name: 'main',
     component: _ => import('@/views/Main/Main'),
-    meta: { title: 'Main' },
+    meta: { title: 'main' },
     children: []
   }
 }
@@ -21,6 +21,7 @@ class FormatRouter {
     this.serverRoutes = serverRoutes
     this.init()
     this.computeRoutes()
+    this.setRedirectRouter()
   }
   init () {
     routesCtx.keys().forEach(route => {
@@ -59,6 +60,10 @@ class FormatRouter {
       }
     })
   }
+  setRedirectRouter () {
+    let name = this.getFirstRouteName(this.routes)
+    this.routes[0].redirect = { name }
+  }
   // 获取文件名
   getDirName (route) {
     let sp = route.split('/')
@@ -76,6 +81,20 @@ class FormatRouter {
       prev[curr.name] = curr
       return prev
     }, {})
+  }
+  // 获取第一个子路由
+  getFirstRouteName (routes) {
+    let firstName
+    const getBosomItem = routes => {
+      let firstItem = routes[0]
+      if (firstItem.children && firstItem.children.length) {
+        getBosomItem(firstItem.children)
+      } else {
+        firstName = firstItem.name
+      }
+    }
+    getBosomItem(routes)
+    return firstName
   }
 }
 

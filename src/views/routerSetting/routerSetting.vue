@@ -1,6 +1,6 @@
 <template>
   <div class="routerSetting">
-    <ff-menu :navs="$store.state.menus" mode="horizontal"></ff-menu>
+<!--    <ff-menu :navs="$store.state.menus" mode="horizontal"></ff-menu>-->
     <div class="header">
       <el-button @click="batchDel">批量删除</el-button>
       <el-button @click="addClick">新增</el-button>
@@ -57,6 +57,9 @@
 
 <script>
 import { getRoutes, addRoute, delRotue, getRoute, editRoute } from '@/api/requestRoutes'
+
+let initForm
+
 export default {
   name: 'routerSetting',
   data () {
@@ -97,21 +100,26 @@ export default {
   },
   created () {
     this.getRoutes()
+    initForm = this.$_copy(this.form)
   },
   methods: {
     async getRoutes () {
-      let { data } = await this._request(getRoutes)
+      let { data } = await this.$_request(getRoutes)
       this.data = data
     },
     addClick () {
+      if (this.type !== 1) {
+        this.form = this.$_copy(initForm)
+      }
       this.type = 1
       this.dialogVisible = !this.dialogVisible
     },
     async handleSubmit () {
+      await this.$refs.routerForm.validate()
       if (this.type === 1) {
-        await this._request(addRoute, this.form, true)
+        await this.$_request(addRoute, this.form, true)
       } else {
-        await this._request(editRoute, { id: this.form.id, form: this.form }, true)
+        await this.$_request(editRoute, { id: this.form.id, form: this.form }, true)
       }
       this.getRoutes()
       this.dialogVisible = !this.dialogVisible
@@ -122,7 +130,7 @@ export default {
       this.dialogVisible = !this.dialogVisible
     },
     async getRoute (id) {
-      let { data } = await this._request(getRoute, id)
+      let { data } = await this.$_request(getRoute, id)
       this.form = data
     },
     async handleEdit (row) {
@@ -136,15 +144,15 @@ export default {
       this.dialogVisible = !this.dialogVisible
     },
     async handleDel (row) {
-      await this._request(delRotue, row.id, true)
+      await this.$_request(delRotue, row.id, true)
       this.getRoutes()
     },
     batchDel () {
-      this._delConfirm(_ => {
+      this.$_delConfirm(_ => {
         let delCount = 0
         this.selection.forEach(async s => {
           let isLast = ++delCount === this.selection.length
-          await this._request(delRotue, s.id, isLast)
+          await this.$_request(delRotue, s.id, isLast)
           if (isLast) this.getRoutes()
         })
       })

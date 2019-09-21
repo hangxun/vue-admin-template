@@ -38,9 +38,9 @@ export default {
   },
   methods: {
     handleLogin () {
-      this.$refs.loginForm._validate().then(async _ => {
+      this.$refs.loginForm.validate().then(async _ => {
         await this.$store.dispatch('addAsyncRoutes')
-        this.$router.push({ name: 'menu2' })
+        this.$router.push({ name: 'main' })
       }).catch(e => e)
     }
   }
