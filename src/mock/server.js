@@ -11,6 +11,7 @@ const formatData = (req, res) => {
   let message = ''
   if (method === 'DELETE') message = '删除成功！'
   else if (method === 'POST') message = '添加成功！'
+  else if (method === 'PUT') message = '修改成功！'
   res.jsonp({
     code: 200,
     message,

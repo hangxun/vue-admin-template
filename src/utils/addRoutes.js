@@ -1,24 +1,17 @@
 // 获取@/views下所有.vue文件的上下文
 let routesCtx = require.context('@/views', true, /.vue$/)
 
-// 主路由
-let Main = _ => {
-  return {
-    path: '/main',
-    name: 'main',
-    component: _ => import('@/views/Main/Main'),
-    meta: { title: 'main' },
-    children: []
-  }
-}
-
-let NotFound = { path: '404', component: _ => import('@/views/404/NotFound') }
-
 class FormatRouter {
   constructor (serverRoutes) {
-    this.routes = [Main()]
-    this.requireRoutes = []
-    this.serverRoutes = serverRoutes
+    this.routes = [{
+      path: '/main',
+      name: 'main',
+      component: _ => import('@/views/Main/Main'),
+      meta: { title: 'main' },
+      children: []
+    }]
+    this._requireRoutes = []
+    this._serverRoutes = serverRoutes
     this.init()
     this.computeRoutes()
     this.setRedirectRouter()
@@ -28,12 +21,22 @@ class FormatRouter {
       let name = this.getDirName(route)
       let path = name
       let component = this.getComponentImport(route)
-      this.requireRoutes.push({ name, path, component })
+      this._requireRoutes.push({ name, path, component })
     })
   }
   computeRoutes () {
+    let flatRoutes = this.assignRoutes()
+    this.createRotuerTree(flatRoutes)
+  }
+  // 设置默认子路由
+  setRedirectRouter () {
+    let name = this.getFirstRouteName(this.routes)
+    this.routes[0].redirect = { name }
+  }
+  // 合并路由
+  assignRoutes () {
     let flatRoutes = []
-    this.serverRoutes.forEach(route => {
+    this._serverRoutes.forEach(route => {
       let serverRouteObj = {
         name: route.name,
         meta: {
@@ -42,11 +45,15 @@ class FormatRouter {
           hidden: route.hidden
         }
       }
-      let reqRoute = this.requireRoutes.find(r => r.name === route.name) || NotFound
-      flatRoutes.push(Object.assign(reqRoute, serverRouteObj))
+      let reqRoute = this._requireRoutes.find(r => r.name === route.name) || { path: route.name, component: _ => import('@/views/404/NotFound') }
+      flatRoutes.push(Object.assign(serverRouteObj, reqRoute))
     })
+    return flatRoutes
+  }
+  // 生成路由树
+  createRotuerTree (flatRoutes) {
     let flatRoutesMap = this.mapRoutes(flatRoutes)
-    this.serverRoutes.forEach(route => {
+    this._serverRoutes.forEach(route => {
       let parentRoute = flatRoutesMap[route.pname]
       let currentRoute = flatRoutesMap[route.name]
       if (parentRoute) {
@@ -59,10 +66,6 @@ class FormatRouter {
         this.routes[0].children.push(currentRoute)
       }
     })
-  }
-  setRedirectRouter () {
-    let name = this.getFirstRouteName(this.routes)
-    this.routes[0].redirect = { name }
   }
   // 获取文件名
   getDirName (route) {

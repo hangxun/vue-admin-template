@@ -102,7 +102,7 @@
  *
  *
  * input
- * @param {string} tp 类型， 可选 text，textarea, password 和其他 原生 input 的 type 值
+ * @param {string} tp 类型， 可选 text，textarea, password, number 和其他 原生 input 的 type 值
  * @param {boolean} readonly 完全只读
  *
  *

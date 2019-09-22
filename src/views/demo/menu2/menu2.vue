@@ -51,7 +51,7 @@ export default {
       },
       formConfig: [
         { type: 'input', prop: 'input', label: 'input', placeholder: 'input' },
-        { type: 'input', prop: 'input2', label: 'input2', placeholder: 'input2' },
+        { type: 'input', tp: 'number', prop: 'input2', label: 'input2', placeholder: 'input2' },
         { slot: 'slot' },
         { type: 'date', prop: 'date', label: 'date', placeholder: 'date' },
         { type: 'date', tp: 'week', prop: 'week', label: 'week', placeholder: 'week' },

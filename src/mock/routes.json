@@ -35,18 +35,18 @@
     {
       "name": "menu3",
       "pname": "",
-      "title": "m3",
+      "title": "menu3",
       "icon": "",
-      "hidden": true,
+      "hidden": false,
       "id": 5
     },
     {
-      "name": "asd",
+      "name": "loginout",
       "pname": "",
-      "title": "dsa",
-      "icon": "",
+      "title": "退出登录",
+      "icon": "el-icon-switch-button",
       "hidden": false,
-      "id": 6
+      "id": 7
     }
   ]
 }

@@ -3,15 +3,17 @@ import App from './App.vue'
 import router from './router/index'
 import store from './store/index'
 import ElementUI from 'element-ui'
-import commonMethods from './plugins/commonMethods'
 import 'element-ui/lib/theme-chalk/index.css'
 import './components'
 import './style/reset.css'
 
+// 自定义插件
+import methods from './plugins/methods'
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
-Vue.use(commonMethods)
+Vue.use(methods)
 
 new Vue({
   router,

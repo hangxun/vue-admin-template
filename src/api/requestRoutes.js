@@ -1,7 +1,12 @@
 import axios from '@/utils/axios'
 
 export const getRoutes = _ => {
-  return axios.get('/routes/routes').then(res => res.data)
+  return axios.get('/routes/routes', { params: { _sort: 'id', _order: 'asc' } }).then(res => {
+    let data = res.data.data
+    let outIdx = data.findIndex(v => v.name === 'loginout')
+    data.push(data.splice(outIdx, 1)[0])
+    return res.data
+  })
 }
 
 export const addRoute = form => {

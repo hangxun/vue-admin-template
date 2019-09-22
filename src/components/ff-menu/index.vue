@@ -7,7 +7,7 @@
     :background-color="bc"
     :text-color="tc"
     :active-text-color="atc">
-    <subMenu v-for="route in filteredNavs" :key="route.path" :sub="route"></subMenu>
+    <subMenu v-for="route in filteredNavs" :key="route.name" :sub="route"></subMenu>
   </el-menu>
 </template>
 

@@ -8,6 +8,7 @@ import router from '@/router'
 Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
+  key: 'ff_store',
   storage: window.sessionStorage,
   reducer: state => {
     return {
@@ -34,6 +35,7 @@ export default new Vuex.Store({
     async addAsyncRoutes ({ commit }) {
       let { data } = await getRoutes()
       let routes = new FormatRouter(data).routes
+      console.log(routes)
       router.addRoutes(routes)
       commit('setRoutes', data)
       commit('setMenus', routes[0].children)

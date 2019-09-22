@@ -1,18 +1,28 @@
 <template>
   <el-table
+    style="width: 100%"
     class="ff-table"
     ref="table"
     :data="data"
-    :border="border"
+    :border="isBorder"
     :highlight-current-row="isRadio"
+    :row-key="rowKey"
+    :tree-props="treeProps"
+    :lazy="isLazy"
+    :load="load"
     @row-click="rowClick"
     @selection-change="selectionChange"
-    @current-change="handleCurrentChange"
-    style="width: 100%">
+    @current-change="handleCurrentChange">
     <el-table-column
       v-if="isSelection"
       type="selection"
       width="55">
+    </el-table-column>
+    <el-table-column
+      v-if="isShowIndex"
+      type="index"
+      align="center"
+      width="50">
     </el-table-column>
     <template v-for="(item, idx) in titles">
       <el-table-column
@@ -74,9 +84,14 @@
  *
  * 选填
  * @param {Array} handler 操作栏显示的按钮类型，['add', 'edit', 'look', 'del']
+ * @param {boolean} isShowIndex 是否显示索引
  * @param {boolean} isSelection 是否多选
  * @param {boolean} isRadio 是否单选
- * @param {boolean} border 是否带边框
+ * @param {boolean} isBorder 是否带边框
+ * @param {string} rowKey 行数据的 Key
+ * @param {object} treeProps 渲染嵌套数据的配置选项
+ * @param {boolean} isLazy 是否懒加载子节点数据
+ * @param {function} load 加载子节点数据的函数，lazy 为 true 时生效，函数第二个参数包含了节点的层级信息 Function(row, treeNode, resolve)
  * @param {string} placeholder 当前项数据为''、null、undefined时显示的文本
  * *
  * @function selectionChange 当选择项发生变化时会触发该事件
@@ -140,6 +155,10 @@ export default {
       type: Array,
       default: _ => []
     },
+    isShowIndex: {
+      type: Boolean,
+      default: false
+    },
     isSelection: {
       type: Boolean,
       default: false
@@ -148,7 +167,11 @@ export default {
       type: Boolean,
       default: false
     },
-    border: {
+    isBorder: {
+      type: Boolean,
+      default: false
+    },
+    isLazy: {
       type: Boolean,
       default: false
     },
@@ -159,6 +182,18 @@ export default {
     placeholder: {
       type: String,
       default: '--'
+    },
+    rowKey: {
+      type: String,
+      default: ''
+    },
+    treeProps: {
+      type: Object,
+      default: _ => ({ hasChildren: 'hasChildren', children: 'children' })
+    },
+    load: {
+      type: Function,
+      default: _ => (tree, treeNode, resolve) => {}
     }
   },
   computed: {

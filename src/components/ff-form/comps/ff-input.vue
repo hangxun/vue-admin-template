@@ -1,5 +1,17 @@
 <template>
   <el-input
+    v-if="tp === 'number'"
+    class="ff-input"
+    type="number"
+    v-model.number="form[prop]"
+    :placeholder="placeholder"
+    :disabled="disabled"
+    :readonly="readonly"
+    :show-password="showPassword"
+    οnkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )"
+  ></el-input>
+  <el-input
+    v-else
     :type="tp"
     v-model="form[prop]"
     :placeholder="placeholder"
@@ -45,5 +57,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+  .ff-input input::-webkit-outer-spin-button,
+  .ff-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  .ff-input input[type="number"]{
+    -moz-appearance: textfield;
+  }
 </style>

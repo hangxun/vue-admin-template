@@ -1,6 +1,6 @@
 <template>
   <div class="routerSetting">
-<!--    <ff-menu :navs="$store.state.menus" mode="horizontal"></ff-menu>-->
+    <ff-menu :navs="$store.state.menus" mode="horizontal"></ff-menu>
     <div class="header">
       <el-button @click="batchDel">批量删除</el-button>
       <el-button @click="addClick">新增</el-button>
@@ -123,6 +123,7 @@ export default {
       }
       this.getRoutes()
       this.dialogVisible = !this.dialogVisible
+      this.form = this.$_copy(initForm)
     },
     handleAdd (row) {
       this.type = 1

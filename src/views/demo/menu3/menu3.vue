@@ -4,6 +4,7 @@
     <ff-table
       :data="data"
       :titles="titles"
+      :load="load"
       @row-click="rowClick"
     >
       <template #aaa="{ row }">
@@ -24,9 +25,9 @@ export default {
     return {
       current: 0,
       data: [
-        { a: 111, b: 222 },
-        { a: 111, b: 222 },
-        { a: 111, b: 222 }
+        { id: 1, a: 111, b: 222 },
+        { id: 2, a: 111, b: 222 },
+        { id: 3, a: 111, b: 222 }
       ],
       titles: [
         { label: 'aaa', slot: 'aaa' },
@@ -56,7 +57,19 @@ export default {
       this.current = -1
     },
     rowClick (row, column, event) {
-      console.log(row, column, event)
+    },
+    load (tree, treeNode, resolve) {
+      let children = []
+      for (let i = 0; i < 4; i++) {
+        children.push({
+          id: `${tree.id}-${i}`,
+          a: `aaa${i}`,
+          b: `bbb${i}`
+        })
+      }
+      setTimeout(_ => {
+        resolve(children)
+      }, 1000)
     }
   }
 }
