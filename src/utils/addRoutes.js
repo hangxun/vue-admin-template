@@ -1,6 +1,7 @@
 // 获取@/views下所有.vue文件的上下文
 let routesCtx = require.context('@/views', true, /.vue$/)
 
+// 格式化路由
 class FormatRouter {
   constructor (serverRoutes) {
     this.routes = [{
@@ -98,6 +99,28 @@ class FormatRouter {
     }
     getBosomItem(routes)
     return firstName
+  }
+  // 获取懒加载函数
+  static getComponentImport (route) {
+    let dirname = routesCtx.keys().find(r => r.includes(`${route.name}.vue`))
+    let path
+    if (dirname) {
+      path = dirname.replace('.', 'views')
+    } else {
+      path = 'views/404/NotFound'
+    }
+    return _ => import(`@/${path}`)
+  }
+  // 重写component
+  static setComponent (routes) {
+    routes.forEach(route => {
+      route.name = route.name === 'main' ? 'Main' : route.name
+      route.component = this.getComponentImport(route)
+      if (route.children && route.children.length) {
+        this.setComponent(route.children)
+      }
+    })
+    return routes
   }
 }
 

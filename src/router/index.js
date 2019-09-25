@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
-// eslint-disable-next-line no-unused-vars
 import FormatRouter from '@/utils/addRoutes'
 
 const { routes } = store.state
@@ -26,7 +25,7 @@ const router = new Router({
 })
 
 if (routes.length) {
-  let asyncRoutes = new FormatRouter(routes).routes
+  let asyncRoutes = FormatRouter.setComponent(routes)
   router.addRoutes(asyncRoutes)
 }
 

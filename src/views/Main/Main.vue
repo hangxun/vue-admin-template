@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     navs () {
-      return this.$store.state.menus
+      return this.$store.getters.menus
     }
   }
 }

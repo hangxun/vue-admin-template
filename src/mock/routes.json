@@ -47,6 +47,14 @@
       "icon": "el-icon-switch-button",
       "hidden": false,
       "id": 7
+    },
+    {
+      "name": "null",
+      "pname": "",
+      "title": "",
+      "icon": "",
+      "hidden": false,
+      "id": 8
     }
   ]
 }
