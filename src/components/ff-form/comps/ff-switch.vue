@@ -1,9 +1,11 @@
 <template>
   <el-switch
     v-model="form[prop]"
-    :active-color="active"
-    :inactive-color="inactive"
+    :active-color="activeColor"
+    :inactive-color="inactiveColor"
     :disabled="disabled"
+    :active-value="activeValue"
+    :inactive-value="inactiveValue"
   >
   </el-switch>
 </template>
@@ -28,11 +30,17 @@ export default {
     disabled () {
       return this.options.disabled || false
     },
-    active () {
-      return this.options.active || '#13ce66'
+    activeColor () {
+      return this.options.activeColor || '#409EFF'
     },
-    inactive () {
-      return this.options.inactive || '#ff4949'
+    inactiveColor () {
+      return this.options.inactiveColor || '#C0CCDA'
+    },
+    activeValue () {
+      return this.options.activeValue || true
+    },
+    inactiveValue () {
+      return this.options.inactiveValue || false
     }
   }
 }

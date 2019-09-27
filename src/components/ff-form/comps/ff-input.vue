@@ -2,8 +2,8 @@
   <el-input
     v-if="tp === 'number'"
     class="ff-input"
-    type="number"
     v-model.number="form[prop]"
+    :type="tp"
     :placeholder="placeholder"
     :disabled="disabled"
     :readonly="readonly"
@@ -12,8 +12,8 @@
   ></el-input>
   <el-input
     v-else
-    :type="tp"
     v-model="form[prop]"
+    :type="tp"
     :placeholder="placeholder"
     :disabled="disabled"
     :readonly="readonly"
@@ -52,7 +52,25 @@ export default {
     },
     showPassword () {
       return this.options.tp === 'password'
+    },
+    value () {
+      return this.form[this.prop]
     }
+  },
+  watch: {
+    value (v) {
+      this.parseVal(v)
+    }
+  },
+  methods: {
+    parseVal (v) {
+      if (this.tp === 'number' && typeof v !== 'number') {
+        this.form[this.prop] = parseFloat(v)
+      }
+    }
+  },
+  created () {
+    this.parseVal(this.value)
   }
 }
 </script>

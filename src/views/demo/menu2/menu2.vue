@@ -37,16 +37,9 @@ export default {
     ]
     return {
       form: {
-        input: '',
-        input2: '',
         slot: 'slotslot',
-        date: '',
-        password: '',
-        textarea: '',
-        radio: '',
+        input2: '123',
         checkbox: [],
-        select: '',
-        switch: true,
         daterange: []
       },
       formConfig: [
@@ -81,7 +74,7 @@ export default {
           props,
           opts
         },
-        { type: 'switch', prop: 'switch', label: 'switch', placeholder: 'switch' },
+        { type: 'switch', prop: 'switch', label: 'switch', placeholder: 'switch', activeValue: '1', inactiveValue: '0' },
         {
           type: 'date',
           tp: 'daterange',

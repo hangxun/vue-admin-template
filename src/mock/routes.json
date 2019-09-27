@@ -2,6 +2,7 @@
   "routes": [
     {
       "name": "menu1",
+      "path": "",
       "pname": "",
       "title": "菜单一",
       "icon": "el-icon-help",
@@ -10,6 +11,7 @@
     },
     {
       "name": "menu2",
+      "path": "menu222222222222222222",
       "pname": "",
       "title": "菜单二",
       "icon": "el-icon-picture-outline-round",
@@ -18,6 +20,7 @@
     },
     {
       "name": "menu1-1",
+      "path": "",
       "pname": "menu1",
       "title": "1-1",
       "icon": "",
@@ -26,6 +29,7 @@
     },
     {
       "name": "menu1-2",
+      "path": "",
       "pname": "menu1",
       "title": "1-2",
       "icon": "",
@@ -34,6 +38,7 @@
     },
     {
       "name": "menu3",
+      "path": "",
       "pname": "",
       "title": "menu3",
       "icon": "",
@@ -42,6 +47,7 @@
     },
     {
       "name": "loginout",
+      "path": "",
       "pname": "",
       "title": "退出登录",
       "icon": "el-icon-switch-button",
@@ -49,12 +55,22 @@
       "id": 7
     },
     {
-      "name": "null",
+      "name": "baidu",
+      "path": "https://www.baidu.com",
       "pname": "",
       "title": "",
       "icon": "",
       "hidden": false,
       "id": 8
+    },
+    {
+      "name": "bilibili",
+      "path": "//www.bilibili.com",
+      "pname": "",
+      "title": "",
+      "icon": "",
+      "hidden": false,
+      "id": 9
     }
   ]
 }

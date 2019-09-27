@@ -4,7 +4,7 @@ export const getRoutes = _ => {
   return axios.get('/routes/routes', { params: { _sort: 'id', _order: 'asc' } }).then(res => {
     let data = res.data.data
     let outIdx = data.findIndex(v => v.name === 'loginout')
-    data.push(data.splice(outIdx, 1)[0])
+    data.push(...data.splice(outIdx, 1))
     return res.data
   })
 }

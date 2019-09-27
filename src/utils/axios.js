@@ -1,11 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-
-const baseUrlObj = {
-  development: '//localhost:3000',
-  production: '//localhost:3000',
-  test: '//localhost:3000'
-}
+import { baseUrlObj } from '@/config'
 
 // 创建axios实例
 const service = axios.create({

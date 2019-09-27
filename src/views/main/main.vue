@@ -1,9 +1,15 @@
 <template>
-  <div class="Main">
+  <div class="main">
     <div class="nav">
-      <ff-menu :navs="navs" class="menu"></ff-menu>
+      <el-scrollbar class="scrollbar">
+        <ff-menu :navs="navs" class="menu"></ff-menu>
+      </el-scrollbar>
     </div>
-    <div class="main-container"><router-view /></div>
+    <div class="main-container">
+      <el-scrollbar class="scrollbar">
+        <router-view />
+      </el-scrollbar>
+    </div>
   </div>
 </template>
 
@@ -23,24 +29,22 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .Main {
+  .main {
     width: 100%;
     display: flex;
+    .scrollbar {
+      height: 100%;
+    }
     .nav {
       width: 201px;
       height: 100vh;
-      overflow-y: auto;
-      &::-webkit-scrollbar {
-        display:none
-      }
-      .menu {
-        min-height: 100%;
+      .scrollbar, .menu {
+        min-height: 100vh;
       }
     }
     .main-container {
       flex: 1;
       height: 100vh;
-      overflow-y: auto;
     }
   }
 </style>

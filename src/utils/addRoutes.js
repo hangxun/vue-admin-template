@@ -7,11 +7,15 @@ class FormatRouter {
     this.routes = [{
       path: '/main',
       name: 'main',
-      component: _ => import('@/views/Main/Main'),
+      component: _ => import('@/views/main/main'),
       meta: { title: 'main' },
       children: []
     }]
     this._requireRoutes = []
+    let loginoutIndex = serverRoutes.findIndex(v => v.name === 'loginout')
+    if (loginoutIndex !== -1) {
+      serverRoutes.push(...serverRoutes.splice(loginoutIndex, 1))
+    }
     this._serverRoutes = serverRoutes
     this.init()
     this.computeRoutes()
@@ -20,9 +24,8 @@ class FormatRouter {
   init () {
     routesCtx.keys().forEach(route => {
       let name = this.getDirName(route)
-      let path = name
       let component = this.getComponentImport(route)
-      this._requireRoutes.push({ name, path, component })
+      this._requireRoutes.push({ name, component })
     })
   }
   computeRoutes () {
@@ -40,6 +43,7 @@ class FormatRouter {
     this._serverRoutes.forEach(route => {
       let serverRouteObj = {
         name: route.name,
+        path: route.path || route.name,
         meta: {
           title: route.title,
           icon: route.icon,
@@ -47,7 +51,7 @@ class FormatRouter {
         }
       }
       let reqRoute = this._requireRoutes.find(r => r.name === route.name) || { path: route.name, component: _ => import('@/views/404/NotFound') }
-      flatRoutes.push(Object.assign(serverRouteObj, reqRoute))
+      flatRoutes.push(Object.assign(reqRoute, serverRouteObj))
     })
     return flatRoutes
   }
@@ -111,10 +115,9 @@ class FormatRouter {
     }
     return _ => import(`@/${path}`)
   }
-  // 重写component
+  // 匹配component
   static setComponent (routes) {
     routes.forEach(route => {
-      route.name = route.name === 'main' ? 'Main' : route.name
       route.component = this.getComponentImport(route)
       if (route.children && route.children.length) {
         this.setComponent(route.children)

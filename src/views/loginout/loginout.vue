@@ -8,12 +8,12 @@ export default {
   data () {
     return {}
   },
-  beforeCreate () {
-    this.$router.push('/')
+  created () {
     sessionStorage.removeItem('ff_store')
+    this.$router.replace('/')
     setTimeout(_ => {
       window.location.reload()
-    }, 200)
+    }, 150)
   }
 }
 </script>

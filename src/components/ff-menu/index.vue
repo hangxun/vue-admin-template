@@ -1,12 +1,13 @@
 <template>
   <el-menu
-    :default-active="$route.name"
     class="ff-menu"
+    :default-active="$route.name"
     :mode="mode"
-    @select="handleSelect"
     :background-color="bc"
     :text-color="tc"
-    :active-text-color="atc">
+    :active-text-color="atc"
+    @select="handleSelect"
+  >
     <subMenu v-for="route in filteredNavs" :key="route.name" :sub="route"></subMenu>
   </el-menu>
 </template>
@@ -35,6 +36,7 @@
  * @param {string} name 导航跳转的路由name,
  * @param {Object} meta 其他信息； { title: 显示的标题，没有的话取name值； hidden: 是否在菜单中隐藏 }
  * */
+import { url } from '@/utils/regexp'
 export default {
   name: 'FfMenu',
   components: {
@@ -79,7 +81,11 @@ export default {
     handleSelect (index, indexPath) {
       this.$emit('select', index, indexPath)
       if (this.isRoute) {
-        this.$router.push({ name: index })
+        if (url.test(index)) {
+          window.open(index)
+        } else {
+          this.$router.push({ name: index })
+        }
       }
     },
     filterNavs (navs) {

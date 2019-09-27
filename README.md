@@ -56,7 +56,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 * package.json: 依赖及脚本配置
 
 ### 公共组件
-公共组件直接读取components中所有的index.vue,并注册为全局组件，注册名为组件的name属性。
+公共组件直接读取components中所有的index.vue,并注册为全局组件，注册名为组件的文件夹名。
 也可在components/index.js修改规则。
     
 ### 路由配置
