@@ -11,4 +11,4 @@ ol,ul,li { list-style:none; }
 input, textarea, select, button { font:14px "微软雅黑","宋体",Verdana,Helvetica,Arial,sans-serif; outline: none; }
 table { border-collapse:collapse; }
 [v-cloak] { display: none !important; }
-.el-scrollbar__wrap{ overflow-x: hidden; }
+

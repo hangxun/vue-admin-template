@@ -14,10 +14,10 @@
 
 <script>
 /**
- * 必填
+ * 必须参数
  * @param {Array} navs 导航数据
  * *
- * 选填
+ * 可选参数
  * @param {string} mode 模式, horizontal: 横向, vertical: 纵向
  * @param {boolean} isRoute 是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 name 进行路由跳转
  * @param {string} bc 菜单的背景色（仅支持 hex 格式）

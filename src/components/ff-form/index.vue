@@ -38,11 +38,11 @@
 
 <script>
 /**
- *必填
+ *必须参数
  * @param {Object} form 表单数据
  * @param {Array} config 表单配置项
  *
- *选填
+ *可选参数
  * @param {Object} rules 验证规则
  * @param {string} labelWidth 表单域标签的宽度
  * @param {boolean} inline 是否使用行内表单模式
@@ -111,7 +111,7 @@
  * btnAppend 在按钮栏内容后插入
  * */
 
-import components from './comps/index.js'
+import components from './components/index.js'
 import upperFirst from 'lodash/upperFirst'
 export default {
   name: 'FfForm',

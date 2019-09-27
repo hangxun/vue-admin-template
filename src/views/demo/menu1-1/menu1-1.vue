@@ -1,19 +1,22 @@
 <template>
   <div class="menu1-1">
-    menu1-1
+    <ff-tinymce v-model="content"></ff-tinymce>
   </div>
 </template>
 
 <script>
 export default {
   name: 'menu1-1',
-  title: '菜单1-1',
-  pname: 'menu1',
   data () {
-    return {}
+    return {
+      content: ''
+    }
   }
 }
 </script>
 
 <style scoped>
+  .menu1-1 {
+    padding: 20px;
+  }
 </style>

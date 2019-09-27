@@ -78,11 +78,11 @@
 
 <script>
 /**
- * 必填
+ * 必须参数
  * @param {Array} titles 表头数据
  * @param {Array} data 表格显示的数据
  *
- * 选填
+ * 可选参数
  * @param {Array} handler 操作栏显示的按钮类型，['add', 'edit', 'look', 'del']
  * @param {boolean} isShowIndex 是否显示索引
  * @param {boolean} isSelection 是否多选

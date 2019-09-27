@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="Main">
     <div class="nav">
       <el-scrollbar class="scrollbar">
         <ff-menu :navs="navs" class="menu"></ff-menu>
@@ -29,7 +29,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-  .main {
+  .Main {
     width: 100%;
     display: flex;
     .scrollbar {
@@ -46,5 +46,12 @@ export default {
       flex: 1;
       height: 100vh;
     }
+  }
+</style>
+
+<style>
+  .Main .nav .el-scrollbar__wrap,
+  .Main .main-container .el-scrollbar__wrap {
+    overflow-x: hidden;
   }
 </style>
