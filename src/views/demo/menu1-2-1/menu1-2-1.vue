@@ -7,8 +7,6 @@
 <script>
 export default {
   name: 'menu1-2-1',
-  title: '菜单1-2-1',
-  pname: 'menu1-2'
 }
 </script>
 

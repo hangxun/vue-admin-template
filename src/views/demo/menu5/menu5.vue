@@ -8,8 +8,6 @@
 <script>
 export default {
   name: 'menu5',
-  title: '菜单5',
-  drother: true,
   data () {
     return {}
   }

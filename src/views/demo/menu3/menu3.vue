@@ -20,7 +20,6 @@
 <script>
 export default {
   name: 'menu3',
-  title: '菜单3',
   data () {
     return {
       current: 0,

@@ -8,7 +8,6 @@
 <script>
 export default {
   name: 'menu1',
-  icon: 'el-icon-eleme',
   data () {
     return {}
   }

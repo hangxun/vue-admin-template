@@ -8,8 +8,6 @@
 <script>
 export default {
   name: 'menu1-2',
-  title: '菜单1-2',
-  pname: 'menu1',
   data () {
     return {}
   }

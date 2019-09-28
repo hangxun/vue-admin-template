@@ -22,8 +22,6 @@
 <script>
 export default {
   name: 'menu2',
-  title: '菜单2',
-  icon: 'el-icon-star-on',
   data () {
     const props = {
       label: 'title',
