@@ -36,9 +36,8 @@ export default {
       height: 100%;
     }
     .nav {
-      width: 201px;
       height: 100vh;
-      .scrollbar, .menu {
+      .menu {
         min-height: 100vh;
       }
     }

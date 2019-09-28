@@ -6,6 +6,7 @@
     :background-color="bc"
     :text-color="tc"
     :active-text-color="atc"
+    :collapse="isCollapse"
     @select="handleSelect"
   >
     <subMenu v-for="route in filteredNavs" :key="route.name" :sub="route"></subMenu>
@@ -56,6 +57,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isCollapse: {
+      type: Boolean,
+      default: false
+    },
     bc: {
       type: String,
       default: '#545c64'
@@ -102,6 +107,9 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-
+<style lang="less">
+  .ff-menu:not(.el-menu--collapse):not(.el-menu--horizontal) {
+    width: 200px;
+    height: 100%;
+  }
 </style>

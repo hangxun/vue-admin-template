@@ -41,7 +41,7 @@
       "path": "",
       "pname": "",
       "title": "menu3",
-      "icon": "",
+      "icon": "el-icon-picture-outline-round",
       "hidden": false,
       "id": 5
     },
@@ -53,24 +53,6 @@
       "icon": "el-icon-switch-button",
       "hidden": false,
       "id": 7
-    },
-    {
-      "name": "baidu",
-      "path": "https://www.baidu.com",
-      "pname": "",
-      "title": "",
-      "icon": "",
-      "hidden": false,
-      "id": 8
-    },
-    {
-      "name": "bilibili",
-      "path": "//www.bilibili.com",
-      "pname": "",
-      "title": "",
-      "icon": "",
-      "hidden": false,
-      "id": 9
     }
   ]
 }
