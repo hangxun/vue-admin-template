@@ -5,7 +5,7 @@
       "path": "",
       "pname": "",
       "title": "菜单一",
-      "icon": "el-icon-help",
+      "icon": "el-icon-menu",
       "hidden": false,
       "id": 1
     },
@@ -14,7 +14,7 @@
       "path": "menu222222222222222222",
       "pname": "",
       "title": "菜单二",
-      "icon": "el-icon-picture-outline-round",
+      "icon": "el-icon-menu",
       "hidden": false,
       "id": 2
     },
@@ -41,18 +41,18 @@
       "path": "",
       "pname": "",
       "title": "menu3",
-      "icon": "el-icon-picture-outline-round",
+      "icon": "el-icon-menu",
       "hidden": false,
       "id": 5
     },
     {
-      "name": "loginout",
-      "path": "",
+      "name": "bilibili",
+      "path": "https://www.bilibili.com",
       "pname": "",
-      "title": "退出登录",
-      "icon": "el-icon-switch-button",
+      "title": "bilibili",
+      "icon": "el-icon-menu",
       "hidden": false,
-      "id": 7
+      "id": 6
     }
   ]
 }

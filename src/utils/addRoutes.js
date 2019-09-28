@@ -4,22 +4,20 @@ let routesCtx = require.context('@/views', true, /.vue$/)
 // 格式化路由
 class FormatRouter {
   constructor (serverRoutes) {
-    this.routes = [{
-      path: '/main',
-      name: 'main',
-      component: _ => import('@/views/main/main'),
-      meta: { title: 'main' },
-      children: []
-    }]
-    this._requireRoutes = []
-    let loginoutIndex = serverRoutes.findIndex(v => v.name === 'loginout')
-    if (loginoutIndex !== -1) {
-      serverRoutes.push(...serverRoutes.splice(loginoutIndex, 1))
+    if (serverRoutes) {
+      this.routes = [{
+        path: '/main',
+        name: 'main',
+        component: _ => import('@/views/main/main'),
+        meta: { title: 'main' },
+        children: []
+      }]
+      this._requireRoutes = []
+      this._serverRoutes = serverRoutes
+      this.init()
+      this.computeRoutes()
+      this.setRedirectRouter()
     }
-    this._serverRoutes = serverRoutes
-    this.init()
-    this.computeRoutes()
-    this.setRedirectRouter()
   }
   init () {
     routesCtx.keys().forEach(route => {
@@ -33,7 +31,7 @@ class FormatRouter {
     this.createRotuerTree(flatRoutes)
   }
   // 设置默认子路由
-  setRedirectRouter () {
+  setRedirectRouter (route) {
     let name = this.getFirstRouteName(this.routes)
     this.routes[0].redirect = { name }
   }
@@ -78,7 +76,7 @@ class FormatRouter {
     let fileName = sp[sp.length - 1]
     return fileName.substring(0, fileName.length - 4)
   }
-  // 获取懒加载函数
+  // 匹配懒加载函数
   getComponentImport (route) {
     let path = route.replace('.', 'views')
     return _ => import(`@/${path}`)
@@ -115,7 +113,7 @@ class FormatRouter {
     }
     return _ => import(`@/${path}`)
   }
-  // 匹配component
+  // 匹配懒加载函数
   static setComponent (routes) {
     routes.forEach(route => {
       route.component = this.getComponentImport(route)

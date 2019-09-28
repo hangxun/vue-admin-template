@@ -4,6 +4,8 @@
   </div>
 </template>
 
-<style lang="less">
-
+<style scoped lang="less">
+  #app {
+    min-width: 1200px;
+  }
 </style>

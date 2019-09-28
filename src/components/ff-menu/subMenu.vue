@@ -5,7 +5,7 @@
         <i v-if="sub.meta && sub.meta.icon" :class="sub.meta.icon"></i>
         <span slot="title">{{sub.meta && sub.meta.title || sub.name}}</span>
       </template>
-      <subMenu v-for="ch in sub.children" :key="ch.path" :sub="ch"></subMenu>
+      <subMenu v-for="ch in sub.children" :key="ch.name" :sub="ch"></subMenu>
     </el-submenu>
     <el-menu-item v-else :index="isUrl(sub.path) ? sub.path : sub.name">
       <i v-if="sub.meta && sub.meta.icon" :class="sub.meta.icon"></i>
@@ -38,5 +38,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-
 </style>

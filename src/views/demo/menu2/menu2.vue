@@ -1,6 +1,5 @@
 <template>
   <div class="menu2">
-    menu2
     <ff-form
       :form="form"
       :config="formConfig"

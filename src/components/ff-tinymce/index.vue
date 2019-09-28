@@ -16,7 +16,7 @@ import Editor from '@tinymce/tinymce-vue'
 import 'tinymce/themes/silver'
 import { plugins, toolbar } from './plugins'
 export default {
-  name: 'ffTinymce',
+  name: 'FfTinymce',
   components: { Editor },
   props: {
     height: {

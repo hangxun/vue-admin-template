@@ -32,7 +32,14 @@ export default {
             catchFn && catchFn()
           })
         },
-        $_copy: cloneDeep
+        $_copy: cloneDeep,
+        $_loginOut () {
+          sessionStorage.removeItem('ff_store')
+          this.$router.replace('/')
+          setTimeout(_ => {
+            window.location.reload()
+          }, 150)
+        }
       }
     })
   }

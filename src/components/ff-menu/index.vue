@@ -19,11 +19,12 @@
  * @param {Array} navs 导航数据
  * *
  * 可选参数
- * @param {string} mode 模式, horizontal: 横向, vertical: 纵向
+ * @param {string} mode 模式, 横向: horizontal, 纵向: vertical
  * @param {boolean} isRoute 是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 name 进行路由跳转
  * @param {string} bc 菜单的背景色（仅支持 hex 格式）
  * @param {string} tc 菜单的文字颜色（仅支持 hex 格式）
  * @param {string} atc 当前激活菜单的文字颜色（仅支持 hex 格式）
+ * @param {boolean} isCollapse 是否水平折叠收起菜单（仅在 mode 为 vertical 时可用）
  * *
  * @function select 菜单激活回调
  * @param index 选中菜单项的 index
@@ -111,5 +112,8 @@ export default {
   .ff-menu:not(.el-menu--collapse):not(.el-menu--horizontal) {
     width: 200px;
     height: 100%;
+  }
+  .el-menu--collapse .el-tooltip {
+    line-height: 56px;
   }
 </style>

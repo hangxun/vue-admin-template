@@ -8,7 +8,7 @@ import actions from './actions'
 
 Vue.use(Vuex)
 
-const vuexLocal = new VuexPersistence({
+const sessionStore = new VuexPersistence({
   key: 'ff_store',
   storage: window.sessionStorage,
   reducer: state => {
@@ -18,10 +18,20 @@ const vuexLocal = new VuexPersistence({
   }
 })
 
+const localStore = new VuexPersistence({
+  key: 'ff_store',
+  storage: window.localStorage,
+  reducer: state => {
+    return {
+      theme: state.theme
+    }
+  }
+})
+
 export default new Vuex.Store({
   state,
   getters,
   mutations,
   actions,
-  plugins: [vuexLocal.plugin]
+  plugins: [sessionStore.plugin, localStore.plugin]
 })

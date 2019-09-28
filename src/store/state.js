@@ -1,3 +1,6 @@
 export default {
-  routes: []
+  routes: [],
+  theme: {
+    layout: 'theme-LR'
+  }
 }

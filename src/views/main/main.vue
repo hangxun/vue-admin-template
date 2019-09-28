@@ -1,56 +1,28 @@
 <template>
   <div class="Main">
-    <div class="nav">
-      <el-scrollbar class="scrollbar">
-        <ff-menu :navs="navs" class="menu"></ff-menu>
-      </el-scrollbar>
-    </div>
-    <div class="main-container">
-      <el-scrollbar class="scrollbar">
-        <router-view />
-      </el-scrollbar>
-    </div>
+    <component :is="layout" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'Main',
+  components: {
+    'theme-LR': _ => import('@/views/theme/theme-LR'),
+    'theme-TB': _ => import('@/views/theme/theme-TB')
+  },
   data () {
     return {
     }
   },
   computed: {
-    navs () {
-      return this.$store.getters.menus
+    layout () {
+      return this.$store.state.theme.layout
     }
   }
 }
 </script>
 
 <style scoped lang="less">
-  .Main {
-    width: 100%;
-    display: flex;
-    .scrollbar {
-      height: 100%;
-    }
-    .nav {
-      height: 100vh;
-      .menu {
-        min-height: 100vh;
-      }
-    }
-    .main-container {
-      flex: 1;
-      height: 100vh;
-    }
-  }
-</style>
 
-<style>
-  .Main .nav .el-scrollbar__wrap,
-  .Main .main-container .el-scrollbar__wrap {
-    overflow-x: hidden;
-  }
 </style>
