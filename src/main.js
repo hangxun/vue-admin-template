@@ -10,12 +10,14 @@ import './style/reset.css'
 
 // 自定义插件
 import methods from './plugins/methods'
+import directive from './plugins/directive'
 
 Vue.config.productionTip = false
 
 Vue.use(Fragment.Plugin)
 Vue.use(ElementUI)
 Vue.use(methods)
+Vue.use(directive)
 
 new Vue({
   router,

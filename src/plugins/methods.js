@@ -4,7 +4,7 @@ export default {
   install (Vue) {
     Vue.mixin({
       methods: {
-        async $_request (fn, params, msg = false) {
+        async $_request (fn, params, msg = false) { // 请求数据
           let data
           if (typeof params === 'boolean') {
             msg = params
@@ -21,7 +21,7 @@ export default {
           }
           return data
         },
-        $_delConfirm (thenFn, catchFn) {
+        $_delConfirm (thenFn, catchFn) { // 确认删除
           this.$confirm('是否确认删除?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -32,8 +32,8 @@ export default {
             catchFn && catchFn()
           })
         },
-        $_copy: cloneDeep,
-        $_loginOut () {
+        $_copy: cloneDeep, // 深拷贝
+        $_loginOut () { // 退出登录
           sessionStorage.removeItem('ff_store')
           this.$router.replace('/')
           setTimeout(_ => {
