@@ -2,7 +2,6 @@ const jsonServer = require('json-server')
 const server = jsonServer.create()
 const { resolve } = require('path')
 const middlewares = jsonServer.defaults()
-// const keyReg = /\/([$\w_-]+)\.(json|js)$/
 
 const routesRouter = jsonServer.router(resolve(__dirname, './routes.json'))
 
