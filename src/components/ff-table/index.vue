@@ -30,7 +30,8 @@
         :key="idx"
         :align="item.align || 'center'"
         :label="item.label"
-        :min-width="item.width || 50">
+        :min-width="item.width"
+      >
         <template v-slot="scope">
           <render v-if="item.render" :key="idx" :render="item.render" :row="scope.row" :column="item" :index="getIndex(scope.row)"></render>
         </template>
@@ -40,7 +41,8 @@
         :key="idx"
         :align="item.align || 'center'"
         :label="item.label"
-        :min-width="item.width || 50">
+        :min-width="item.width"
+      >
         <template v-slot="scope">
           <slot :name="item.slot" :row="scope.row"></slot>
         </template>
@@ -51,7 +53,8 @@
           :align="item.align || 'center'"
           :prop="item.prop"
           :label="item.label"
-          :min-width="item.width || 50">
+          :min-width="item.width"
+        >
           <template v-slot="scope">
             <template v-if="checkVal(scope.row[item.prop])">{{placeholder}}</template>
             <template v-else>{{scope.row[item.prop]}}</template>

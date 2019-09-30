@@ -6,6 +6,6 @@
 
 <style scoped lang="less">
   #app {
-    min-width: 1200px;
+    /*min-width: 1200px;*/
   }
 </style>

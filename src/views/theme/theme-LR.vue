@@ -21,12 +21,28 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 export default {
   name: 'themeLR',
   data () {
     return {
       isCollapse: false
     }
+  },
+  methods: {
+    changeCollapse () {
+      let w = window.innerWidth
+      if (w > 1200 && this.isCollapse) this.isCollapse = false
+      if (w <= 1200 && !this.isCollapse) this.isCollapse = true
+    }
+  },
+  mounted () {
+    this.changeCollapse()
+    this.changeCollapse = debounce(this.changeCollapse, 300)
+    window.addEventListener('resize', this.changeCollapse)
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.changeCollapse)
   }
 }
 </script>
@@ -35,9 +51,6 @@ export default {
   .theme-LR {
     width: 100%;
     display: flex;
-    .scrollbar {
-      height: 100%;
-    }
     .nav {
       height: 100vh;
       background-color: #545c64;
@@ -45,14 +58,22 @@ export default {
         min-height: 100vh;
         border: none;
       }
+      .scrollbar {
+        height: 100%;
+      }
     }
     .main-container {
       flex: 1 1 auto;
-      height: calc(100vh - 61px);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
       .collapse-icon {
         font-size: 28px !important;
         color: #ffffff;
         cursor: pointer;
+      }
+      .scrollbar {
+        flex: 1 1 auto;
       }
     }
   }
