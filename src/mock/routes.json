@@ -7,6 +7,7 @@
       "title": "菜单一",
       "icon": "el-icon-menu",
       "hidden": false,
+      "keepAlive": true,
       "id": 1
     },
     {
@@ -16,6 +17,7 @@
       "title": "菜单二",
       "icon": "el-icon-menu",
       "hidden": false,
+      "keepAlive": true,
       "id": 2
     },
     {
@@ -25,6 +27,7 @@
       "title": "1-1",
       "icon": "",
       "hidden": false,
+      "keepAlive": true,
       "id": 3
     },
     {
@@ -34,6 +37,7 @@
       "title": "1-2",
       "icon": "",
       "hidden": false,
+      "keepAlive": true,
       "id": 4
     },
     {
@@ -43,6 +47,7 @@
       "title": "menu3",
       "icon": "el-icon-menu",
       "hidden": false,
+      "keepAlive": true,
       "id": 5
     },
     {
@@ -52,6 +57,7 @@
       "title": "bilibili",
       "icon": "el-icon-menu",
       "hidden": false,
+      "keepAlive": true,
       "id": 6
     }
   ]

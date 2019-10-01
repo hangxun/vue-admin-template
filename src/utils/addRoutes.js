@@ -1,129 +1,144 @@
 // 获取@/views下所有.vue文件的上下文
-let routesCtx = require.context('@/views', true, /.vue$/)
+const requireComponent = require.context('@/views', true, /.vue$/)
 
-// 格式化路由
-class FormatRouter {
-  constructor (serverRoutes) {
-    if (serverRoutes) {
-      this.routes = [{
-        path: '/main',
-        name: 'main',
-        component: _ => import('@/views/main/main'),
-        meta: { title: 'main' },
-        children: []
-      }]
-      this._requireRoutes = []
-      this._serverRoutes = serverRoutes
-      this.init()
-      this.computeRoutes()
-      this.setRedirectRouter()
-    }
-  }
-  init () {
-    routesCtx.keys().forEach(route => {
-      let name = this.getDirName(route)
-      let component = this.getComponentImport(route)
-      this._requireRoutes.push({ name, component })
-    })
-  }
-  computeRoutes () {
-    let flatRoutes = this.assignRoutes()
-    this.createRotuerTree(flatRoutes)
-  }
-  // 设置默认子路由
-  setRedirectRouter (route) {
-    let name = this.getFirstRouteName(this.routes)
-    this.routes[0].redirect = { name }
-  }
-  // 合并路由
-  assignRoutes () {
-    let flatRoutes = []
-    this._serverRoutes.forEach(route => {
-      let serverRouteObj = {
-        name: route.name,
-        path: route.path || route.name,
-        meta: {
-          title: route.title || route.name,
-          icon: route.icon,
-          hidden: route.hidden || false,
-          keepAlive: route.keepAlive || true
-        }
-      }
-      let reqRoute = this._requireRoutes.find(r => r.name === route.name) || { path: route.name, component: _ => import('@/views/404/NotFound') }
-      flatRoutes.push(Object.assign(reqRoute, serverRouteObj))
-    })
-    return flatRoutes
-  }
-  // 生成路由树
-  createRotuerTree (flatRoutes) {
-    let flatRoutesMap = this.mapRoutes(flatRoutes)
-    this._serverRoutes.forEach(route => {
-      let parentRoute = flatRoutesMap[route.pname]
-      let currentRoute = flatRoutesMap[route.name]
-      if (parentRoute) {
-        if (!parentRoute.children) {
-          parentRoute.children = [currentRoute]
-        } else {
-          parentRoute.children.push(currentRoute)
-        }
-      } else {
-        this.routes[0].children.push(currentRoute)
-      }
-    })
-  }
-  // 获取文件名
-  getDirName (route) {
-    let sp = route.split('/')
-    let fileName = sp[sp.length - 1]
-    return fileName.substring(0, fileName.length - 4)
-  }
-  // 匹配懒加载函数
-  getComponentImport (route) {
-    let path = route.replace('.', 'views')
-    return _ => import(`@/${path}`)
-  }
-  // 映射路由
-  mapRoutes (routes) {
-    return routes.reduce((prev, curr) => {
-      prev[curr.name] = curr
-      return prev
-    }, {})
-  }
-  // 获取第一个子路由
-  getFirstRouteName (routes) {
-    let firstName
-    const getBosomItem = routes => {
-      let firstItem = routes[0]
-      if (firstItem.children && firstItem.children.length) {
-        getBosomItem(firstItem.children)
-      } else {
-        firstName = firstItem.name
-      }
-    }
-    getBosomItem(routes)
-    return firstName
-  }
-  // 获取懒加载函数
-  static getComponentImport (route) {
-    let dirname = routesCtx.keys().find(r => r.includes(`${route.name}.vue`))
-    let path
-    if (dirname) {
-      path = dirname.replace('.', 'views')
-    } else {
-      path = 'views/404/NotFound'
-    }
-    return _ => import(`@/${path}`)
-  }
-  // 匹配懒加载函数
-  static setComponent (routes) {
-    routes.forEach(route => {
-      route.component = this.getComponentImport(route)
-      if (route.children && route.children.length) {
-        this.setComponent(route.children)
-      }
-    })
-    return routes
-  }
+// 获取文件名
+export const getDirName = route => {
+  let sp = route.split('/')
+  let fileName = sp[sp.length - 1]
+  return fileName.substring(0, fileName.length - 4)
 }
 
-export default FormatRouter
+// 获取列表中第一个没有子节点的路由
+export const getFirstChild = (routes, childrenProp = 'children') => {
+  let firstChild
+  const getBosomItem = routes => {
+    let firstItem = routes[0]
+    if (firstItem.children && firstItem.children.length) {
+      getBosomItem(firstItem.children)
+    } else {
+      firstChild = firstItem
+    }
+  }
+  getBosomItem(routes)
+  return firstChild
+}
+
+// 设置默认子路由
+export const setRedirect = routes => {
+  routes.forEach(route => {
+    if (!route.redirect) {
+      let child = routes.find(r => r.meta.pname === route.name)
+      if (child) route.redirect = child
+    }
+  })
+}
+
+// 获取某个name的路由
+export const getHaveNameRoute = (routes, name) => {
+  let resultRoute
+  const eachRoutes = routes => {
+    routes.forEach(route => {
+      if (route.name === name) {
+        resultRoute = route
+        return
+      }
+      if (route.children && route.children.length) {
+        eachRoutes(route.children)
+      }
+    })
+  }
+  eachRoutes(routes)
+  return resultRoute
+}
+
+// 获取懒加载方法
+export const getImportFunc = name => {
+  let dirname = requireComponent.keys().find(v => getDirName(v) === name)
+  let importDir = dirname ? dirname.replace('.', 'views') : 'views/404/NotFound'
+  return _ => import(`@/${importDir}`)
+}
+
+// 设置component
+export const setComponent = routes => {
+  return routes.map(route => {
+    route.component = getImportFunc(route.name)
+    if (route.children && route.children.length) setComponent(route.children)
+    return route
+  })
+}
+
+// 整理路由对象
+export const mapRoutes = routes => {
+  return routes.map(route => {
+    let name = route.name
+    let path = route.path || name
+    let title = route.title || name
+    let hidden = route.hidden || false
+    let keepAlive = route.keepAlive || true
+    let pname = route.pname
+    let icon = route.icon
+    return {
+      name,
+      path,
+      meta: { title, hidden, keepAlive, pname, icon }
+    }
+  })
+}
+
+// 菜单数组转对象
+export const menus2object = menus => {
+  return menus.reduce((prev, curr) => {
+    prev[curr.name] = curr
+    return prev
+  }, {})
+}
+
+// 匹配父菜单
+export const matchParentMenu = (menusMap, menus) => {
+  menus.forEach(menu => {
+    let pname = menu.meta.pname
+    let pmenu = menusMap[pname]
+    if (pmenu) {
+      if (!pmenu.children) pmenu.children = []
+      pmenu.children.push(menu)
+    }
+  })
+  return menusMap
+}
+
+// 获取路由数组
+export const getRoutes = routes => {
+  let children = setComponent(mapRoutes(routes))
+  let mainRoutes = [{
+    path: '/main',
+    name: 'main',
+    redirect: { name: children[0].name },
+    component: _ => import('@/views/main/main'),
+    meta: { title: 'main' },
+    children
+  }]
+  setRedirect(children)
+  return mainRoutes
+}
+
+// 获取菜单数组
+export const getMenus = routes => {
+  let flatMenus = mapRoutes(routes)
+  let menus = []
+  let menusMap = matchParentMenu(menus2object(flatMenus), flatMenus)
+  Object.values(menusMap).forEach(menu => {
+    if (!menu.meta.pname) {
+      menus.push(menu)
+    }
+  })
+  return menus
+}
+
+// 获取路由和菜单数组
+const formatRouter = serverRoutes => {
+  let routes = getRoutes(serverRoutes)
+  let menus = getMenus(serverRoutes)
+  return { routes, menus }
+}
+
+export default formatRouter

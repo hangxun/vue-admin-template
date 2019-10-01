@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
-import FormatRouter from '@/utils/addRoutes'
+import { setComponent } from '@/utils/addRoutes'
 
 const { routes } = store.state
 
@@ -24,7 +24,7 @@ const router = new Router({
 })
 
 if (routes.length) {
-  let asyncRoutes = FormatRouter.setComponent(routes)
+  let asyncRoutes = setComponent(routes)
   router.addRoutes(asyncRoutes)
 }
 

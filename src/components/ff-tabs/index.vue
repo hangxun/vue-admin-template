@@ -18,7 +18,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { getHaveNameRoute } from '@/utils/func'
+import { getHaveNameRoute } from '@/utils/addRoutes'
 export default {
   name: 'FfTabs',
   data () {
