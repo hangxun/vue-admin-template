@@ -6,4 +6,4 @@ export const baseUrlObj = {
 }
 
 // 是否开启线上模式
-export const isOnline = false
+export const isOnline = true

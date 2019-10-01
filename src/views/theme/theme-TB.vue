@@ -3,15 +3,18 @@
     <div class="theme-TB-header">
       <div class="nav">
         <el-scrollbar class="scrollbar">
-          <ff-menu class="menu" :navs="$store.getters.menus" mode="horizontal"></ff-menu>
+          <ff-menu class="menu" :navs="$store.state.menus" mode="horizontal"></ff-menu>
         </el-scrollbar>
       </div>
       <ff-header class="config"></ff-header>
     </div>
     <div class="main-container">
       <el-scrollbar class="scrollbar">
-        <ff-matched />
-        <router-view />
+        <ff-tabs />
+        <keep-alive>
+          <router-view v-if="$route.meta.keepAlive" />
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive" />
       </el-scrollbar>
     </div>
   </div>

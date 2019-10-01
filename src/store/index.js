@@ -13,7 +13,9 @@ const sessionStore = new VuexPersistence({
   storage: window.sessionStorage,
   reducer: state => {
     return {
-      routes: state.routes
+      routes: state.routes,
+      menus: state.menus,
+      tabs: state.tabs
     }
   }
 })

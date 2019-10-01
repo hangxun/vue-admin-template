@@ -5,7 +5,4 @@
 </template>
 
 <style scoped lang="less">
-  #app {
-    /*min-width: 1200px;*/
-  }
 </style>

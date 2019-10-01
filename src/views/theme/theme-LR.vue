@@ -2,7 +2,7 @@
   <div class="theme-LR">
     <div class="nav">
       <el-scrollbar class="scrollbar">
-        <ff-menu class="menu" :navs="$store.getters.menus" :isCollapse="isCollapse"></ff-menu>
+        <ff-menu class="menu" :navs="$store.state.menus" :isCollapse="isCollapse"></ff-menu>
       </el-scrollbar>
     </div>
     <div class="main-container">
@@ -13,8 +13,13 @@
         </template>
       </ff-header>
       <el-scrollbar class="scrollbar">
-        <ff-matched />
-        <div class="main-content"><router-view /></div>
+        <ff-tabs />
+        <div class="main-content">
+          <keep-alive>
+            <router-view v-if="$route.meta.keepAlive" />
+          </keep-alive>
+          <router-view v-if="!$route.meta.keepAlive" />
+        </div>
       </el-scrollbar>
     </div>
   </div>
@@ -32,8 +37,8 @@ export default {
   methods: {
     changeCollapse () {
       let w = window.innerWidth
-      if (w > 1200 && this.isCollapse) this.isCollapse = false
-      if (w <= 1200 && !this.isCollapse) this.isCollapse = true
+      if (w > 1180 && this.isCollapse) this.isCollapse = false
+      if (w <= 1180 && !this.isCollapse) this.isCollapse = true
     }
   },
   mounted () {

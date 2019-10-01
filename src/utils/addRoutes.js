@@ -43,9 +43,10 @@ class FormatRouter {
         name: route.name,
         path: route.path || route.name,
         meta: {
-          title: route.title,
+          title: route.title || route.name,
           icon: route.icon,
-          hidden: route.hidden
+          hidden: route.hidden || false,
+          keepAlive: route.keepAlive || true
         }
       }
       let reqRoute = this._requireRoutes.find(r => r.name === route.name) || { path: route.name, component: _ => import('@/views/404/NotFound') }
