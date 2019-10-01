@@ -5,7 +5,7 @@
         <ff-menu class="menu" :navs="$store.state.menus" :isCollapse="isCollapse"></ff-menu>
       </el-scrollbar>
     </div>
-    <div class="main-container">
+    <div class="main-container" :style="{ width: isCollapse ? 'calc(100% - 64px)' : 'calc(100% - 200px)' }">
       <ff-header>
         <template #left>
 <!--          <span></span>-->
@@ -73,7 +73,6 @@ export default {
       }
     }
     .main-container {
-      flex: 1 1 auto;
       height: 100vh;
       display: flex;
       flex-direction: column;
