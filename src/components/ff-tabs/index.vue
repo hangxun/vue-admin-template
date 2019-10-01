@@ -1,5 +1,6 @@
 <template>
   <el-tabs
+    class="ff-tabs"
     :value="$route.name"
     type="card"
     closable
@@ -42,11 +43,22 @@ export default {
       }
     },
     handleRemove (name) {
+      if (this.tabs.length > 1) {
+        let index = this.tabs.findIndex(v => v.name === name)
+        this.removeTab(name)
+        if (this.$route.name === name) {
+          let toIndex = index === 0 ? index : index - 1
+          this.$router.push({ name: this.tabs[toIndex].name })
+        }
+      }
     },
     ...mapMutations(['addTab', 'removeTab'])
   }
 }
 </script>
 
-<style scoped>
+  <style>
+  .ff-tabs .el-tabs__header {
+    margin: 0;
+  }
 </style>

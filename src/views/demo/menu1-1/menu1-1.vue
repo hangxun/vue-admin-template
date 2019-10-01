@@ -11,6 +11,9 @@ export default {
     return {
       content: ''
     }
+  },
+  created () {
+    console.log('menu1-1')
   }
 }
 </script>

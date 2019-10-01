@@ -8,11 +8,11 @@
       </div>
       <ff-header class="config"></ff-header>
     </div>
+    <div class="tab-bar"><ff-tabs /></div>
     <div class="main-container">
       <el-scrollbar class="scrollbar">
-        <ff-tabs />
-        <keep-alive>
-          <router-view v-if="$route.meta.keepAlive" />
+        <keep-alive :include="tabsName">
+          <router-view v-if="$route.meta.keepAlive"  />
         </keep-alive>
         <router-view v-if="!$route.meta.keepAlive" />
       </el-scrollbar>
@@ -25,6 +25,11 @@ export default {
   name: 'theme-TB',
   data () {
     return {}
+  },
+  computed: {
+    tabsName () {
+      return this.$store.state.tabs.map(v => v.name)
+    }
   }
 }
 </script>
@@ -47,9 +52,12 @@ export default {
         width: 130px;
       }
     }
+    .tab-bar {
+      width: 100vw;
+    }
     .main-container {
       width: 100%;
-      height: calc(100vh - 61px);
+      height: calc(100vh - 102px);
       box-sizing: border-box;
       .scrollbar {
         height: 100%;

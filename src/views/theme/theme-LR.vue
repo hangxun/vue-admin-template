@@ -12,10 +12,10 @@
           <i class="collapse-icon" :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click="isCollapse = !isCollapse"></i>
         </template>
       </ff-header>
+      <div class="tab-bar" :class="isCollapse ? 'big' : 'small'"><ff-tabs /></div>
       <el-scrollbar class="scrollbar">
-        <ff-tabs />
         <div class="main-content">
-          <keep-alive>
+          <keep-alive :include="tabsName">
             <router-view v-if="$route.meta.keepAlive" />
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive" />
@@ -32,6 +32,11 @@ export default {
   data () {
     return {
       isCollapse: false
+    }
+  },
+  computed: {
+    tabsName () {
+      return this.$store.state.tabs.map(v => v.name)
     }
   },
   methods: {
@@ -79,6 +84,14 @@ export default {
       }
       .scrollbar {
         flex: 1 1 auto;
+      }
+      .tab-bar {
+        &.small {
+          width: calc(100vw - 205px);
+        }
+        &.big {
+          width: calc(100vw - 69px);
+        }
       }
     }
   }

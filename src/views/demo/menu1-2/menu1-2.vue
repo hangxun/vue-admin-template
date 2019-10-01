@@ -45,6 +45,9 @@ export default {
     formatter (row, column) {
       return row.address
     }
+  },
+  created () {
+    console.log('menu1-2')
   }
 }
 </script>
