@@ -10,6 +10,7 @@
     :tree-props="treeProps"
     :lazy="isLazy"
     :load="load"
+    :header-row-class-name="headerRowClassName"
     @row-click="rowClick"
     @selection-change="selectionChange"
     @current-change="handleCurrentChange">
@@ -28,6 +29,7 @@
       <el-table-column
         v-if="item.render"
         :key="idx"
+        :render-header="renderHeader"
         :align="item.align || 'center'"
         :label="item.label"
         :min-width="item.width"
@@ -39,6 +41,7 @@
       <el-table-column
         v-else-if="item.slot"
         :key="idx"
+        :render-header="renderHeader"
         :align="item.align || 'center'"
         :label="item.label"
         :min-width="item.width"
@@ -50,12 +53,14 @@
       <template v-else>
         <el-table-column
           :key="idx"
+          :render-header="renderHeader"
           :align="item.align || 'center'"
           :prop="item.prop"
           :label="item.label"
           :min-width="item.width"
+          :formatter="item.formatter"
         >
-          <template v-slot="scope">
+          <template v-slot="scope" v-if="!item.formatter">
             <template v-if="checkVal(scope.row[item.prop])">{{placeholder}}</template>
             <template v-else>{{scope.row[item.prop]}}</template>
           </template>
@@ -199,6 +204,13 @@ export default {
       default: _ => (tree, treeNode, resolve) => {}
     }
   },
+  data () {
+    return {
+      start: false,
+      startIdx: -1,
+      targetIdx: -1
+    }
+  },
   computed: {
     isAdd () {
       return this.handler.includes('add')
@@ -214,6 +226,43 @@ export default {
     }
   },
   methods: {
+    renderHeader (createElement, { column }) {
+      return createElement(
+        'div', {
+          'class': ['thead-cell'],
+          on: {
+            mousedown: ($event) => { this.handleMouseDown($event, column) },
+            mousemove: ($event) => { this.handleMouseMove($event, column) },
+            mouseup: ($event) => { this.handleMouseUp($event, column) }
+          }
+        }, [
+          // 添加 <a> 用于显示表头 label
+          createElement('a', column.label),
+          // 添加一个空标签用于显示拖动动画
+          createElement('span', {
+            'class': ['virtual']
+          })
+        ])
+    },
+    handleMouseDown (e, column) {
+      this.start = true
+      this.startIdx = this.titles.findIndex(v => v.label === column.label)
+      e.currentTarget.style.cursor = 'move'
+    },
+    handleMouseMove (e, column) {
+      if (this.start) {
+        this.targetIdx = this.titles.findIndex(v => v.label === column.label)
+      }
+    },
+    handleMouseUp (e, column) {
+      this.start = false
+      e.currentTarget.style.cursor = 'default'
+    },
+    headerRowClassName (row, rowIndex) {
+      console.log(rowIndex)
+      // return rowIndex === this.startIdx ? 'startColumn' : ''
+      return 'aaa'
+    },
     checkVal (val) {
       if (val === null || val === undefined || val === '') return true
       else return false

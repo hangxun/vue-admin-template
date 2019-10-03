@@ -1,5 +1,4 @@
 import formatRouter, { getFirstChild } from '@/utils/addRoutes'
-// eslint-disable-next-line no-unused-vars
 import router from '@/router'
 import { getRoutes } from '@/api/requestRoutes'
 import { isOnline } from '@/config'
