@@ -10,7 +10,6 @@
     :tree-props="treeProps"
     :lazy="isLazy"
     :load="load"
-    :header-row-class-name="headerRowClassName"
     @row-click="rowClick"
     @selection-change="selectionChange"
     @current-change="handleCurrentChange">
@@ -29,7 +28,6 @@
       <el-table-column
         v-if="item.render"
         :key="idx"
-        :render-header="renderHeader"
         :align="item.align || 'center'"
         :label="item.label"
         :min-width="item.width"
@@ -41,7 +39,6 @@
       <el-table-column
         v-else-if="item.slot"
         :key="idx"
-        :render-header="renderHeader"
         :align="item.align || 'center'"
         :label="item.label"
         :min-width="item.width"
@@ -53,7 +50,6 @@
       <template v-else>
         <el-table-column
           :key="idx"
-          :render-header="renderHeader"
           :align="item.align || 'center'"
           :prop="item.prop"
           :label="item.label"
@@ -149,6 +145,7 @@
  * btnPrepend 操作栏前置内容
  * btnAppend 操作栏后置内容
  * */
+import Sortable from 'sortablejs'
 export default {
   name: 'FfTable',
   components: {
@@ -208,7 +205,8 @@ export default {
     return {
       start: false,
       startIdx: -1,
-      targetIdx: -1
+      targetIdx: -1,
+      dropCol: []
     }
   },
   computed: {
@@ -226,43 +224,6 @@ export default {
     }
   },
   methods: {
-    renderHeader (createElement, { column }) {
-      return createElement(
-        'div', {
-          'class': ['thead-cell'],
-          on: {
-            mousedown: ($event) => { this.handleMouseDown($event, column) },
-            mousemove: ($event) => { this.handleMouseMove($event, column) },
-            mouseup: ($event) => { this.handleMouseUp($event, column) }
-          }
-        }, [
-          // 添加 <a> 用于显示表头 label
-          createElement('a', column.label),
-          // 添加一个空标签用于显示拖动动画
-          createElement('span', {
-            'class': ['virtual']
-          })
-        ])
-    },
-    handleMouseDown (e, column) {
-      this.start = true
-      this.startIdx = this.titles.findIndex(v => v.label === column.label)
-      e.currentTarget.style.cursor = 'move'
-    },
-    handleMouseMove (e, column) {
-      if (this.start) {
-        this.targetIdx = this.titles.findIndex(v => v.label === column.label)
-      }
-    },
-    handleMouseUp (e, column) {
-      this.start = false
-      e.currentTarget.style.cursor = 'default'
-    },
-    headerRowClassName (row, rowIndex) {
-      console.log(rowIndex)
-      // return rowIndex === this.startIdx ? 'startColumn' : ''
-      return 'aaa'
-    },
     checkVal (val) {
       if (val === null || val === undefined || val === '') return true
       else return false
@@ -303,7 +264,20 @@ export default {
         this.$emit('del', row)
       }).catch(() => {
       })
+    },
+    columnDrop () {
+      const wrapperTr = document.querySelector('.el-table__header-wrapper tr')
+      this.sortable = Sortable.create(wrapperTr, {
+        animation: 180,
+        delay: 0,
+        onEnd: evt => {
+          [this.titles[evt.oldIndex], this.titles[evt.newIndex]] = [this.titles[evt.newIndex], this.titles[evt.oldIndex]]
+        }
+      })
     }
+  },
+  mounted () {
+    this.columnDrop()
   }
 }
 </script>
