@@ -59,6 +59,16 @@
       "hidden": false,
       "keepAlive": true,
       "id": 6
+    },
+    {
+      "name": "menu4",
+      "path": "menu4",
+      "pname": "",
+      "title": "menu4",
+      "icon": "el-icon-menu",
+      "hidden": false,
+      "keepAlive": true,
+      "id": 7
     }
   ]
 }
