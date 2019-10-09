@@ -187,7 +187,7 @@ export default {
     },
     dropColumn: {
       type: Boolean,
-      default: false
+      default: true
     },
     dropRow: {
       type: Boolean,
@@ -280,7 +280,7 @@ export default {
     },
     columnDrop () {
       if (this.dropColumn) {
-        const wrapperTr = document.querySelector('.el-table__header-wrapper tr')
+        const wrapperTr = document.querySelector('.ff-table .el-table__header-wrapper tr')
         this.sortable = Sortable.create(wrapperTr, {
           animation: 180,
           delay: 0,
@@ -293,7 +293,7 @@ export default {
     },
     rowDrop () {
       if (this.dropRow) {
-        const tbody = document.querySelector('.el-table__body-wrapper tbody')
+        const tbody = document.querySelector('.ff-table .el-table__body-wrapper tbody')
         Sortable.create(tbody, {
           onEnd: e => {
             let oldTit = this.data.splice(e.oldIndex, 1)

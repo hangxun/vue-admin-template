@@ -8,8 +8,11 @@
       </div>
       <ff-header class="config"></ff-header>
     </div>
-    <div class="tab-bar"><ff-tabs /></div>
-    <div class="main-container">
+    <div class="tab-bar" v-if="navigate">
+      <ff-matched v-if="navigate === 'matched'" />
+      <ff-tabs v-if="navigate === 'tabs'" />
+    </div>
+    <div class="main-container" v-if="navigate === 'tabs'">
       <el-scrollbar class="scrollbar">
         <keep-alive :include="tabsName">
           <router-view v-if="$route.meta.keepAlive"  />
@@ -17,14 +20,22 @@
         <router-view v-if="!$route.meta.keepAlive" />
       </el-scrollbar>
     </div>
+    <div class="main-container" v-else>
+      <el-scrollbar class="scrollbar">
+        <router-view />
+      </el-scrollbar>
+    </div>
   </div>
 </template>
 
 <script>
+import { navigate } from '@/config'
 export default {
   name: 'theme-TB',
   data () {
-    return {}
+    return {
+      navigate
+    }
   },
   computed: {
     tabsName () {

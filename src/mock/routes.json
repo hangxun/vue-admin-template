@@ -69,6 +69,26 @@
       "hidden": false,
       "keepAlive": true,
       "id": 7
+    },
+    {
+      "name": "menu1-2-1",
+      "path": "menu1-2-1",
+      "pname": "menu1-2",
+      "title": "menu1-2-1",
+      "icon": "",
+      "hidden": false,
+      "keepAlive": true,
+      "id": 8
+    },
+    {
+      "name": "menu1-2-2",
+      "path": "menu1-2-2",
+      "pname": "menu1-2",
+      "title": "menu1-2-2",
+      "icon": "",
+      "hidden": false,
+      "keepAlive": true,
+      "id": 8
     }
   ]
 }

@@ -12,14 +12,18 @@
           <i class="collapse-icon" :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click="isCollapse = !isCollapse"></i>
         </template>
       </ff-header>
-      <div class="tab-bar" :class="isCollapse ? 'big' : 'small'"><ff-tabs /></div>
+      <div class="tab-bar" :class="isCollapse ? 'big' : 'small'" v-if="navigate">
+        <ff-matched v-if="navigate === 'matched'" />
+        <ff-tabs v-if="navigate === 'tabs'" />
+      </div>
       <el-scrollbar class="scrollbar">
-        <div class="main-content">
+        <div class="main-content" v-if="navigate === 'tabs'">
           <keep-alive :include="tabsName">
             <router-view v-if="$route.meta.keepAlive" />
           </keep-alive>
           <router-view v-if="!$route.meta.keepAlive" />
         </div>
+        <router-view v-else />
       </el-scrollbar>
     </div>
   </div>
@@ -27,11 +31,13 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import { navigate } from '@/config'
 export default {
   name: 'themeLR',
   data () {
     return {
-      isCollapse: false
+      isCollapse: false,
+      navigate
     }
   },
   computed: {

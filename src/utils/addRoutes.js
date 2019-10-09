@@ -23,12 +23,12 @@ export const getFirstChild = (routes, childrenProp = 'children') => {
   return firstChild
 }
 
-// 设置默认子路由
-export const setRedirect = routes => {
+// 设置重定向为第一个子路由
+export const setRedirect = (routes, deep = false) => {
   routes.forEach(route => {
     if (!route.redirect) {
       let child = routes.find(r => r.meta.pname === route.name)
-      if (child) route.redirect = child
+      if (deep && child) route.redirect = child
     }
   })
 }
@@ -117,7 +117,7 @@ export const getRoutes = routes => {
     meta: { title: 'main' },
     children
   }]
-  setRedirect(children)
+  setRedirect(children, true)
   return mainRoutes
 }
 

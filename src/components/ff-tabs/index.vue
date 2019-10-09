@@ -3,7 +3,7 @@
     class="ff-tabs"
     :value="$route.name"
     type="card"
-    closable
+    :closable="tabs.length > 1"
     @tab-click="handleClick"
     @tab-remove="handleRemove">
     <el-tab-pane
