@@ -10,21 +10,21 @@
           <el-dropdown-item @click.native="$_loginOut">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <i class="el-icon-s-tools tools-icon" @click="isShow = !isShow"></i>
+      <i class="el-icon-s-tools tools-icon" @click="handleConfigShow"></i>
     </div>
-    <theme-config :isShow.sync="isShow" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'FfHeader',
-  components: {
-    'theme-config': _ => import('./theme-config')
-  },
   data () {
     return {
-      isShow: false
+    }
+  },
+  methods: {
+    handleConfigShow () {
+      this.$store.commit('setTheme', { prop: 'configShow', val: true })
     }
   }
 }

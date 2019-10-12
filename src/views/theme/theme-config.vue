@@ -18,22 +18,16 @@
 <script>
 export default {
   name: 'theme-config',
-  props: {
-    isShow: {
-      type: Boolean,
-      default: false
-    }
-  },
   data () {
     return {}
   },
   computed: {
     show: {
       get () {
-        return this.isShow
+        return this.$store.state.theme.configShow
       },
       set (v) {
-        this.$emit('update:isShow', v)
+        this.$store.commit('setTheme', { prop: 'configShow', val: v })
       }
     },
     layout: {
