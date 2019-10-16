@@ -311,7 +311,7 @@
               let newIndex = e.newIndex
               const subProps = [this.isShowIndex, this.isSelection]
               const subLength = subProps.filter(b => b).length
-              const maxColumn = this.data.length + subLength
+              const maxColumn = this.titles.length + subLength
               if (newIndex < subLength) {
                 sortable.sort(oldSort)
               } else if (this.handleList.length && newIndex === maxColumn) {
