@@ -13,10 +13,11 @@
       </el-dropdown>
     </div>
     <el-table
+      v-if="tableShow"
       v-set-id
-      style="width: 100%"
       class="ff-el-table"
       ref="table"
+      :header-cell-class-name="_headerCellClassName"
       :data="data"
       :border="isBorder"
       :highlight-current-row="isRadio"
@@ -42,66 +43,21 @@
         align="center"
         width="50">
       </el-table-column>
-      <template v-for="item in titles">
-        <el-table-column
-          v-if="item.render && !item.hidden"
-          class-name="allow-drop-column"
-          :key="_getDynamicProp(item.prop)"
-          :align="item.align || align"
-          :label="item.label"
-          :min-width="item.width"
-          :sortable="item.sortable || false"
-          :sort-by="item.sortBy"
-          :sort-method="item.sortMethod"
-        >
-          <template #header="scope" v-if="_hasHeader(item.prop)">
-            <slot :name="'header-' + item.prop" :column="scope.column"></slot>
-          </template>
-          <template v-slot="scope">
-            <render v-if="item.render" :key="_getDynamicProp(item.prop)" :render="item.render" :row="scope.row" :column="item" :index="_getIndex(scope.row)"></render>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-else-if="item.slot && !item.hidden"
-          class-name="allow-drop-column"
-          :key="_getDynamicProp(item.prop)"
-          :align="item.align || align"
-          :label="item.label"
-          :min-width="item.width"
-          :sortable="item.sortable || false"
-          :sort-by="item.sortBy"
-          :sort-method="item.sortMethod"
-        >
-          <template #header="scope" v-if="_hasHeader(item.prop)">
-            <slot :name="'header-' + item.prop" :column="scope.column"></slot>
-          </template>
-          <template v-slot="scope">
-            <slot :name="item.slot" :row="scope.row"></slot>
-          </template>
-        </el-table-column>
-        <el-table-column
-          v-else-if="!item.hidden"
-          class-name="allow-drop-column"
-          :align="item.align || align"
-          :key="_getDynamicProp(item.prop)"
-          :prop="item.prop"
-          :label="item.label"
-          :min-width="item.width"
-          :sortable="item.sortable || false"
-          :sort-by="item.sortBy"
-          :sort-method="item.sortMethod"
-          :formatter="item.formatter"
-          :show-overflow-tooltip="item.showTooltip || false"
-        >
-          <template #header="scope" v-if="_hasHeader(item.prop)">
-            <slot :name="'header-' + item.prop" :column="scope.column"></slot>
-          </template>
-          <template v-slot="scope" v-if="!item.formatter">
-            <template v-if="_checkVal(scope.row[item.prop])">{{placeholder}}</template>
-            <template v-else>{{scope.row[item.prop]}}</template>
-          </template>
-        </el-table-column>
-      </template>
+      <ff-table-column
+        v-for="item in titles"
+        :key="item.prop"
+        :item="item"
+        :align="align"
+        :data="data"
+        :placeholder="placeholder"
+      >
+        <template #[item.slot]="{ row }">
+          <slot :name="item.slot" :row="row"></slot>
+        </template>
+        <template #[`header-${item.prop}`]="{ column }" v-if="_hasHeader(item.prop)">
+          <slot :name="'header-' + item.prop" :column="column"></slot>
+        </template>
+      </ff-table-column>
       <el-table-column
         v-if="handlerShow"
         align="center"
@@ -141,7 +97,7 @@
 </template>
 
 <script>
-  /**
+/**
    * 必须参数
    * @param {Array} titles 表头数据
    * @param {Array} data 表格显示的数据
@@ -154,6 +110,7 @@
    * @param {boolean} is-border 是否带边框
    * @param {boolean} drop-column 表格列是否可拖拽
    * @param {boolean} drop-row 表格行是否可拖拽， 需要设置rowKey
+   * @param {boolean} colum-control 是否显示列控制按钮
    * @param {string} row-key 行数据的 Key（唯一标识）
    * @param {object} tree-props 渲染嵌套数据的配置选项, 默认{ hasChildren: 'hasChildren', children: 'children' }
    * @param {boolean} lazy 是否懒加载子节点数据
@@ -185,8 +142,8 @@
    * @function del 点击删除按钮是触发的事件
    * @param {Object} row
    * */
-  
-  /**
+
+/**
    * 表头数据
    * titles
    * @param {string} label 显示的标题
@@ -204,8 +161,8 @@
    * 自定义表头
    * 在标签中直接插入插槽名为header-[prop], 参数为{ column }
    * */
-  
-  /**
+
+/**
    * 操作栏按钮类型
    * handler
    * @param add 添加按钮
@@ -217,337 +174,396 @@
    * btnPrepend 操作栏前置内容, 参数为{ row }
    * btnAppend 操作栏后置内容, 参数为{ row }
    * */
-  import Sortable from 'sortablejs'
-  import FileSaver from 'file-saver'
-  import XLSX from 'xlsx'
-  import html2Canvas from 'html2canvas'
-  import JsPDF from 'jspdf'
-  import trim from 'lodash/trim'
-  import cloneDeep from 'lodash/cloneDeep'
-  export default {
-    name: 'HyFfTable',
-    components: {
-      render: _ => import('./render')
+
+/**
+   * Methods
+   * exportExcel 用于导出excel
+   * exportCsv 用于导出csv
+   * exportPdf 用于导出pdf
+   * */
+import Sortable from 'sortablejs'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+import html2Canvas from 'html2canvas'
+import JsPDF from 'jspdf'
+import trim from 'lodash/trim'
+import cloneDeep from 'lodash/cloneDeep'
+export default {
+  name: 'FfTable',
+  components: {
+    render: _ => import('./render'),
+    'ff-table-column': _ => import('./ff-table-column')
+  },
+  directives: {
+    setId (el, binding, vnode) {
+      vnode.context.$nextTick(() => {
+        let aTh = el.getElementsByTagName('th')
+        let thArr = Array.from(aTh)
+        thArr.forEach((th, idx) => {
+          let prop = Array.from(th.classList).find(v => v.includes('title-'))
+          th.dataset.id = prop ? prop.replace('title-', '') : idx
+        })
+      })
+    }
+  },
+  props: {
+    data: {
+      type: Array,
+      default: _ => []
     },
-    directives: {
-      setId (el, binding, vnode) {
-        vnode.context.$nextTick(() => {
-          let aTh = el.getElementsByTagName('th')
-          let thArr = Array.from(aTh)
-          thArr.forEach((th, idx) => {
-            th.dataset.id = idx
-          })
+    titles: {
+      type: Array,
+      default: _ => []
+    },
+    isShowIndex: {
+      type: Boolean,
+      default: false
+    },
+    isSelection: {
+      type: Boolean,
+      default: false
+    },
+    isRadio: {
+      type: Boolean,
+      default: false
+    },
+    isBorder: {
+      type: Boolean,
+      default: false
+    },
+    lazy: {
+      type: Boolean,
+      default: false
+    },
+    dropColumn: {
+      type: Boolean,
+      default: true
+    },
+    dropRow: {
+      type: Boolean,
+      default: false
+    },
+    columControl: {
+      type: Boolean,
+      default: false
+    },
+    exportFile: {
+      type: Boolean,
+      default: false
+    },
+    handler: {
+      type: [Array, String],
+      default: _ => []
+    },
+    placeholder: {
+      type: String,
+      default: '--'
+    },
+    rowKey: String,
+    treeProps: {
+      type: Object,
+      default: _ => ({ hasChildren: 'hasChildren', children: 'children' })
+    },
+    load: Function,
+    align: {
+      type: String,
+      default: 'center'
+    }
+  },
+  data () {
+    return {
+      controlShow: false,
+      selection: [],
+      oldSelection: [],
+      tableShow: true
+    }
+  },
+  computed: {
+    handleList () {
+      let handle = this.handler
+      if (typeof handle === 'string') return handle.split(',').map(v => trim(v))
+      else return handle
+    },
+    isAdd () {
+      return this.handleList.includes('add')
+    },
+    isEdit () {
+      return this.handleList.includes('edit')
+    },
+    isLook () {
+      return this.handleList.includes('look')
+    },
+    isDel () {
+      return this.handleList.includes('del')
+    },
+    isHasHandlerSlot () {
+      let slots = Object.keys(this.$scopedSlots)
+      return slots.some(v => v === 'btnPrepend' || v === 'btnAppend')
+    },
+    handlerShow () {
+      const handlerFlags = [this.isHasHandlerSlot, this.isAdd, this.isEdit, this.isLook, this.isDel]
+      return handlerFlags.some(v => v)
+    }
+  },
+  watch: {
+    titles: {
+      handler () {
+        this._syncTitles()
+      },
+      immediate: true,
+      deep: true
+    },
+    tableShow (b) {
+      if (b) {
+        this.$nextTick(() => {
+          this._columnDrop()
+          this._rowDrop()
         })
       }
+    }
+  },
+  methods: {
+    _headerCellClassName ({ row, column, rowIndex, columnIndex }) {
+      return column.property ? 'title-' + column.property : ''
     },
-    props: {
-      data: {
-        type: Array,
-        default: _ => []
-      },
-      titles: {
-        type: Array,
-        default: _ => []
-      },
-      isShowIndex: {
-        type: Boolean,
-        default: false
-      },
-      isSelection: {
-        type: Boolean,
-        default: false
-      },
-      isRadio: {
-        type: Boolean,
-        default: false
-      },
-      isBorder: {
-        type: Boolean,
-        default: false
-      },
-      lazy: {
-        type: Boolean,
-        default: false
-      },
-      dropColumn: {
-        type: Boolean,
-        default: true
-      },
-      dropRow: {
-        type: Boolean,
-        default: false
-      },
-      columControl: {
-        type: Boolean,
-        default: false
-      },
-      exportFile: {
-        type: Boolean,
-        default: false
-      },
-      handler: {
-        type: [Array, String],
-        default: _ => []
-      },
-      placeholder: {
-        type: String,
-        default: '--'
-      },
-      rowKey: String,
-      treeProps: {
-        type: Object,
-        default: _ => ({ hasChildren: 'hasChildren', children: 'children' })
-      },
-      load: Function,
-      align: {
-        type: String,
-        default: 'center'
+    _hasHeader (prop) {
+      let slots = Object.keys(this.$scopedSlots)
+      return slots.includes(`header-${prop}`)
+    },
+    _checkVal (val) {
+      if (val === null || val === undefined || val === '') return true
+      else return false
+    },
+    _getIndex (row) {
+      return this.data.findIndex(v => v === row)
+    },
+    _rowClick (row, column, event) {
+      this.$emit('row-click', row, column, event)
+      if (this.isSelection) {
+        this.toggleRowSelection(row)
       }
     },
-    data () {
-      return {
-        dropColumnCount: 0,
-        controlShow: false,
-        selection: [],
-        oldSelection: []
-      }
+    _rowDblclick (row, column, event) {
+      this.$emit('row-dblclick', row, column, event)
     },
-    computed: {
-      handleList () {
-        let handle = this.handler
-        if (typeof handle === 'string') return handle.split(',').map(v => trim(v))
-        else return handle
-      },
-      isAdd () {
-        return this.handleList.includes('add')
-      },
-      isEdit () {
-        return this.handleList.includes('edit')
-      },
-      isLook () {
-        return this.handleList.includes('look')
-      },
-      isDel () {
-        return this.handleList.includes('del')
-      },
-      isHasHandlerSlot () {
-        let slots = Object.keys(this.$scopedSlots)
-        return slots.some(v => v === 'btnPrepend' || v === 'btnAppend')
-      },
-      handlerShow () {
-        const handlerFlags = [this.isHasHandlerSlot, this.isAdd, this.isEdit, this.isLook, this.isDel]
-        return handlerFlags.some(v => v)
-      }
+    _selectionChange (selection) {
+      this.$emit('selection-change', selection)
     },
-    watch: {
-      titles: {
-        handler () {
-          this._syncTitles()
-        },
-        immediate: true,
-        deep: true
-      }
+    _handleCurrentChange (row) {
+      this.$emit('current-change', row)
     },
-    methods: {
-      _getDynamicProp (prop) {
-        return `${prop}${this.dropColumnCount}`
-      },
-      _hasHeader (prop) {
-        let slots = Object.keys(this.$scopedSlots)
-        return slots.includes(`header-${prop}`)
-      },
-      _checkVal (val) {
-        if (val === null || val === undefined || val === '') return true
-        else return false
-      },
-      _getIndex (row) {
-        return this.data.findIndex(v => v === row)
-      },
-      _rowClick (row, column, event) {
-        this.$emit('row-click', row, column, event)
-        if (this.isSelection) {
-          this.toggleRowSelection(row)
-        }
-      },
-      _rowDblclick (row, column, event) {
-        this.$emit('row-dblclick', row, column, event)
-      },
-      _selectionChange (selection) {
-        this.$emit('selection-change', selection)
-      },
-      _handleCurrentChange (row) {
-        this.$emit('current-change', row)
-      },
-      _sortChange ({ column, prop, order }) {
-        this.$emit('sort-change', { column, prop, order })
-      },
-      toggleRowSelection (row) {
-        this.$refs.table.toggleRowSelection(row)
-      },
-      _handleAdd (row) {
-        this.$emit('add', row)
-      },
-      _handleEdit (row) {
-        this.$emit('edit', row)
-      },
-      _handleLook (row) {
-        this.$emit('look', row)
-      },
-      _handleDel (row) {
-        this.$confirm('是否确认删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$emit('del', row)
-        }).catch(() => {
-        })
-      },
-      _columnDrop () {
-        if (this.dropColumn) {
-          let oldSort
-          const oTable = this.$refs.table.$el
-          const wrapperTr = oTable.querySelector('.el-table__header-wrapper tr')
-          let sortable = Sortable.create(wrapperTr, {
-            animation: 180,
-            delay: 0,
-            dataIdAttr: 'data-id',
-            handle: '.allow-drop-column',
-            onStart: e => {
-              oldSort = sortable.toArray()
-            },
-            onEnd: e => {
-              let oldIndex = e.oldIndex
-              let newIndex = e.newIndex
-              const subProps = [this.isShowIndex, this.isSelection]
-              const subLength = subProps.filter(b => b).length
-              const maxColumn = this.titles.length + subLength
-              if (newIndex < subLength) {
-                sortable.sort(oldSort)
-              } else if (this.handleList.length && newIndex >= maxColumn) {
-                sortable.sort(oldSort)
-              } else {
-                oldIndex -= subLength
-                newIndex -= subLength
-                let oldTit = this.titles.splice(oldIndex, 1)
-                this.titles.splice(newIndex, 0, ...oldTit)
-                this.dropColumnCount++
-              }
+    _sortChange ({ column, prop, order }) {
+      this.$emit('sort-change', { column, prop, order })
+    },
+    toggleRowSelection (row) {
+      this.$refs.table.toggleRowSelection(row)
+    },
+    _handleAdd (row) {
+      this.$emit('add', row)
+    },
+    _handleEdit (row) {
+      this.$emit('edit', row)
+    },
+    _handleLook (row) {
+      this.$emit('look', row)
+    },
+    _handleDel (row) {
+      this.$confirm('是否确认删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$emit('del', row)
+      }).catch(() => {
+      })
+    },
+    _findParent (prop) {
+      let parent
+      const findParent = arr => {
+        let p = arr.find(v => v.children && v.children.map(c => c.prop).includes(prop))
+        if (p) {
+          parent = p
+        } else {
+          arr.forEach(v => {
+            if (v.children) {
+              findParent(v.children)
             }
           })
         }
-      },
-      _rowDrop () {
-        if (this.dropRow) {
-          const oTable = this.$refs.table.$el
-          const tbody = oTable.querySelector('.el-table__body-wrapper tbody')
-          Sortable.create(tbody, {
-            animation: 180,
-            delay: 0,
-            onEnd: e => {
-              let oldTit = this.data.splice(e.oldIndex, 1)
-              this.data.splice(e.newIndex, 0, ...oldTit)
-            }
-          })
-        }
-      },
-      _syncTitles () {
-        let selection = this.titles.filter(v => !v.hidden).map(c => c.prop)
-        this.selection = selection
-        this.oldSelection = selection
-      },
-      _setHiddenTitle () {
-        this.titles.forEach(c => {
-          if (!this.selection.includes(c.prop)) {
-            this.$set(c, 'hidden', true)
-          } else {
-            Reflect.deleteProperty(c, 'hidden')
-          }
-        })
-      },
-      _confirmControl () {
-        this._setHiddenTitle()
-        this.controlShow = false
-        this.oldSelection = cloneDeep(this.selection)
-      },
-      _cancelControl () {
-        this.controlShow = false
-        this.selection = cloneDeep(this.oldSelection)
-      },
-      _beforeCloseControl (done) {
-        this.selection = cloneDeep(this.oldSelection)
-        done()
-      },
-      openMsgBox (cb) {
-        this.$prompt('请输入导出文件名', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          inputValue: `导出文件_${Date.now()}`,
-        }).then(({ value }) => {
-          cb && cb(value)
-        })
-      },
-      exportExcel () {
-        this.openMsgBox(dirname => {
-          this._exportFile(dirname, 'xlsx')
-        })
-      },
-      exportCsv () {
-        this.openMsgBox(dirname => {
-          this._exportFile(dirname, 'csv')
-        })
-      },
-      _exportFile (dirname, suffix) {
-        var wb = XLSX.utils.table_to_book(this.$refs.table.$el)
-        var wbout = XLSX.write(wb, { bookType: suffix, bookSST: true, type: 'array' })
-        try {
-          FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), `${dirname}.${suffix}`)
-        } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-        return wbout
-      },
-      exportPdf () {
-        this.openMsgBox(dirname => {
-          this._exportPdf(dirname)
-        })
-      },
-      _exportPdf(dirname) {
-        html2Canvas(this.$refs.table.$el, {
-          allowTaint: true
-        }).then(function (canvas) {
-            let contentWidth = canvas.width
-            let contentHeight = canvas.height
-            let pageHeight = contentWidth / 586 * 841.89
-            let leftHeight = contentHeight
-            let position = 0
-            let imgWidth = 595.28
-            let imgHeight = 586 / contentWidth * contentHeight
-            let pageData = canvas.toDataURL('image/jpeg', 1.0)
-            let PDF = new JsPDF('', 'pt', 'a4')
-            if (leftHeight < pageHeight) {
-              PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
-            } else {
-              while (leftHeight > 0) {
-                PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-                leftHeight -= pageHeight
-                position -= 841.89
-                if (leftHeight > 0) {
-                  PDF.addPage()
+      }
+      findParent(this.titles)
+      return parent
+    },
+    _columnDrop () {
+      if (this.dropColumn) {
+        let oldSort
+        const oTable = this.$refs.table.$el
+        setTimeout(_ => {
+          const trs = Array.from(oTable.querySelectorAll('.el-table__header-wrapper tr'))
+          trs.forEach(tr => {
+            let sortable = Sortable.create(tr, {
+              animation: 180,
+              delay: 0,
+              dataIdAttr: 'data-id',
+              handle: '.allow-drop-column',
+              onStart: e => {
+                oldSort = sortable.toArray()
+              },
+              onEnd: e => {
+                let oldIndex = e.oldIndex
+                let newIndex = e.newIndex
+                if (oldIndex === newIndex) return
+                const classList = e.item.classList
+                const targetClass = classList[classList.length - 1].replace('title-', '')
+                const targetParent = this._findParent(targetClass)
+                if (targetParent) {
+                  let titles = targetParent.children
+                  let oldTitIndex = titles.findIndex(v => v.prop === oldSort[oldIndex])
+                  let newTitIndex = titles.findIndex(v => v.prop === oldSort[newIndex])
+                  if (oldTitIndex === -1 || newTitIndex === -1) {
+                    sortable.sort(oldSort)
+                  } else {
+                    let oldTit = titles.splice(oldTitIndex, 1)
+                    titles.splice(newTitIndex, 0, ...oldTit)
+                    this.tableShow = false
+                    this.$nextTick(() => {
+                      this.tableShow = true
+                    })
+                  }
+                } else {
+                  let oldTitIndex = this.titles.findIndex(v => v.prop === oldSort[oldIndex])
+                  let newTitIndex = this.titles.findIndex(v => v.prop === oldSort[newIndex])
+                  if (oldTitIndex === -1 || newTitIndex === -1) {
+                    sortable.sort(oldSort)
+                  } else {
+                    let oldTit = this.titles.splice(oldTitIndex, 1)
+                    this.titles.splice(newTitIndex, 0, ...oldTit)
+                    this.tableShow = false
+                    this.$nextTick(() => {
+                      this.tableShow = true
+                    })
+                  }
                 }
               }
-            }
-            PDF.save(dirname + '.pdf')
-          }
-        )
+            })
+          })
+        }, 200)
       }
     },
-    mounted () {
-      this._columnDrop()
-      this._rowDrop()
+    _rowDrop () {
+      if (this.dropRow) {
+        const oTable = this.$refs.table.$el
+        const tbody = oTable.querySelector('.el-table__body-wrapper tbody')
+        Sortable.create(tbody, {
+          animation: 180,
+          delay: 0,
+          onEnd: e => {
+            let oldTit = this.data.splice(e.oldIndex, 1)
+            this.data.splice(e.newIndex, 0, ...oldTit)
+          }
+        })
+      }
+    },
+    _syncTitles () {
+      let selection = this.titles.filter(v => !v.hidden).map(c => c.prop)
+      this.selection = selection
+      this.oldSelection = selection
+    },
+    _setHiddenTitle () {
+      this.titles.forEach(c => {
+        if (!this.selection.includes(c.prop)) {
+          this.$set(c, 'hidden', true)
+        } else {
+          Reflect.deleteProperty(c, 'hidden')
+        }
+      })
+    },
+    _confirmControl () {
+      this._setHiddenTitle()
+      this.controlShow = false
+      this.oldSelection = cloneDeep(this.selection)
+    },
+    _cancelControl () {
+      this.controlShow = false
+      this.selection = cloneDeep(this.oldSelection)
+    },
+    _beforeCloseControl (done) {
+      this.selection = cloneDeep(this.oldSelection)
+      done()
+    },
+    openMsgBox (cb) {
+      this.$prompt('请输入导出文件名', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputValue: `导出文件_${Date.now()}`
+      }).then(({ value }) => {
+        cb && cb(value)
+      })
+    },
+    exportExcel () {
+      this.openMsgBox(dirname => {
+        this._exportFile(dirname, 'xlsx')
+      })
+    },
+    exportCsv () {
+      this.openMsgBox(dirname => {
+        this._exportFile(dirname, 'csv')
+      })
+    },
+    _exportFile (dirname, suffix) {
+      var wb = XLSX.utils.table_to_book(this.$refs.table.$el)
+      var wbout = XLSX.write(wb, { bookType: suffix, bookSST: true, type: 'array' })
+      try {
+        FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), `${dirname}.${suffix}`)
+      } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+      return wbout
+    },
+    exportPdf () {
+      this.openMsgBox(dirname => {
+        this._exportPdf(dirname)
+      })
+    },
+    _exportPdf (dirname) {
+      html2Canvas(this.$refs.table.$el, {
+        allowTaint: true
+      }).then(function (canvas) {
+        let contentWidth = canvas.width
+        let contentHeight = canvas.height
+        let pageHeight = contentWidth / 586 * 841.89
+        let leftHeight = contentHeight
+        let position = 0
+        let imgWidth = 595.28
+        let imgHeight = 586 / contentWidth * contentHeight
+        let pageData = canvas.toDataURL('image/jpeg', 1.0)
+        let PDF = new JsPDF('', 'pt', 'a4')
+        if (leftHeight < pageHeight) {
+          PDF.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight)
+        } else {
+          while (leftHeight > 0) {
+            PDF.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+            leftHeight -= pageHeight
+            position -= 841.89
+            if (leftHeight > 0) {
+              PDF.addPage()
+            }
+          }
+        }
+        PDF.save(dirname + '.pdf')
+      }
+      )
     }
+  },
+  mounted () {
+    this._columnDrop()
+    this._rowDrop()
   }
+}
 </script>
 
 <style scoped>
+  .ff-el-table {
+    width: 100%;
+  }
   .centerBtn {
     margin-left: 20px;
     margin-right: 10px;
