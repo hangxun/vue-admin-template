@@ -8,18 +8,24 @@
     :sortable="item.sortable || false"
     :sort-by="item.sortBy"
     :sort-method="item.sortMethod"
+    :fixed="item.fixed"
   >
     <template v-if="item.children">
-      <hy-ff-table-column
+      <ff-table-column
         v-for="child in item.children"
         :key="child.prop"
         :item="child"
         :align="align"
         :data="data"
         :placeholder="placeholder"
-      ></hy-ff-table-column>
+      >
+        <template v-for="(_, key) in slots" #[key]="scope">
+          <slot v-if="_hasHeader(key)" :name="key" :column="scope.column"></slot>
+          <slot v-else :name="key" :row="scope.row"></slot>
+        </template>
+      </ff-table-column>
     </template>
-    <template #header="scope" v-if="_hasHeader(item.prop)">
+    <template #header="scope" v-if="_hasPropHeader(item.prop)">
       <slot :name="'header-' + item.prop" :column="scope.column"></slot>
     </template>
     <template v-slot="scope">
@@ -35,18 +41,24 @@
     :sortable="item.sortable || false"
     :sort-by="item.sortBy"
     :sort-method="item.sortMethod"
+    :fixed="item.fixed"
   >
     <template v-if="item.children">
-      <hy-ff-table-column
+      <ff-table-column
         v-for="child in item.children"
         :key="child.prop"
         :item="child"
         :align="align"
         :data="data"
         :placeholder="placeholder"
-      ></hy-ff-table-column>
+      >
+        <template v-for="(_, key) in slots" #[key]="scope">
+          <slot v-if="_hasHeader(key)" :name="key" :column="scope.column"></slot>
+          <slot v-else :name="key" :row="scope.row"></slot>
+        </template>
+      </ff-table-column>
     </template>
-    <template #header="scope" v-if="_hasHeader(item.prop)">
+    <template #header="scope" v-if="_hasPropHeader(item.prop)">
       <slot :name="'header-' + item.prop" :column="scope.column"></slot>
     </template>
     <template v-slot="scope">
@@ -65,18 +77,24 @@
     :sort-method="item.sortMethod"
     :formatter="item.formatter"
     :show-overflow-tooltip="item.showTooltip || false"
+    :fixed="item.fixed"
   >
     <template v-if="item.children">
-      <hy-ff-table-column
+      <ff-table-column
         v-for="child in item.children"
         :key="child.prop"
         :item="child"
         :align="align"
         :data="data"
         :placeholder="placeholder"
-      ></hy-ff-table-column>
+      >
+        <template v-for="(_, key) in slots" #[key]="scope">
+          <slot v-if="_hasHeader(key)" :name="key" :column="scope.column"></slot>
+          <slot v-else :name="key" :row="scope.row"></slot>
+        </template>
+      </ff-table-column>
     </template>
-    <template #header="scope" v-if="_hasHeader(item.prop)">
+    <template #header="scope" v-if="_hasPropHeader(item.prop)">
       <slot :name="'header-' + item.prop" :column="scope.column"></slot>
     </template>
     <template v-slot="scope" v-if="!item.formatter">
@@ -88,7 +106,7 @@
 
 <script>
 export default {
-  name: 'hy-ff-table-column',
+  name: 'ff-table-column',
   components: {
     render: _ => import('./render')
   },
@@ -102,10 +120,18 @@ export default {
   data () {
     return {}
   },
+  computed: {
+    slots () {
+      return this.$scopedSlots
+    }
+  },
   methods: {
-    _hasHeader (prop) {
+    _hasPropHeader (prop) {
       let slots = Object.keys(this.$scopedSlots)
       return slots.includes(`header-${prop}`)
+    },
+    _hasHeader (name) {
+      return name.includes('header')
     },
     _checkVal (val) {
       if (val === null || val === undefined || val === '') return true

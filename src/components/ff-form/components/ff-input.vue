@@ -1,17 +1,6 @@
 <template>
   <el-input
-    v-if="tp === 'number'"
     class="ff-input"
-    v-model.number="form[prop]"
-    :type="tp"
-    :placeholder="placeholder"
-    :disabled="disabled"
-    :readonly="readonly"
-    :show-password="showPassword"
-    οnkeypress="return( /[\d]/.test(String.fromCharCode(event.keyCode) ) )"
-  ></el-input>
-  <el-input
-    v-else
     v-model="form[prop]"
     :type="tp"
     :placeholder="placeholder"
@@ -39,7 +28,9 @@ export default {
       return this.options.prop || ''
     },
     tp () {
-      return this.options.tp || 'text'
+      let tp = this.options.tp
+      if (!tp || tp === 'number') return 'text'
+      else return tp
     },
     placeholder () {
       return this.options.placeholder || ''
@@ -57,20 +48,26 @@ export default {
       return this.form[this.prop]
     }
   },
-  watch: {
-    value (v) {
-      this.parseVal(v)
-    }
-  },
   methods: {
-    parseVal (v) {
-      if (this.tp === 'number' && typeof v !== 'number') {
-        this.form[this.prop] = parseFloat(v)
-      }
+    watchValue () {
+      this.$watch(() => {
+        return this.form[this.prop]
+      }, {
+        handler (val) {
+          if (typeof val !== 'number' && val) {
+            val = val.replace(/[\D]/g, '')
+          }
+          if (val || val === 0) this.form[this.prop] = Number(val)
+          else this.form[this.prop] = ''
+        },
+        immediate: true
+      })
     }
   },
-  created () {
-    this.parseVal(this.value)
+  mounted () {
+    if (this.options.tp === 'number') {
+      this.watchValue()
+    }
   }
 }
 </script>

@@ -15,16 +15,21 @@
     <el-table
       v-if="tableShow"
       v-set-id
-      class="ff-el-table"
+      class="ff-table"
       ref="table"
       :header-cell-class-name="_headerCellClassName"
+      :row-class-name="rowClassName"
       :data="data"
-      :border="isBorder"
-      :highlight-current-row="isRadio"
+      :border="border"
+      :highlight-current-row="radio"
       :row-key="rowKey"
       :tree-props="treeProps"
       :lazy="lazy"
       :load="load"
+      :stripe="stripe"
+      :height="height"
+      :max-height="maxHeight"
+      :span-method="spanMethod"
       @row-click="_rowClick"
       @row-dblclick="_rowDblclick"
       @selection-change="_selectionChange"
@@ -32,13 +37,13 @@
       @sort-change="_sortChange"
     >
       <el-table-column
-        v-if="isSelection"
+        v-if="select"
         align="center"
         type="selection"
         width="50">
       </el-table-column>
       <el-table-column
-        v-if="isShowIndex"
+        v-if="showIndex"
         type="index"
         align="center"
         width="50">
@@ -51,11 +56,9 @@
         :data="data"
         :placeholder="placeholder"
       >
-        <template #[item.slot]="{ row }">
-          <slot :name="item.slot" :row="row"></slot>
-        </template>
-        <template #[`header-${item.prop}`]="{ column }" v-if="_hasHeader(item.prop)">
-          <slot :name="'header-' + item.prop" :column="column"></slot>
+        <template v-for="(_, key) in slots" #[key]="scope">
+          <slot v-if="_hasHeader(key)" :name="key" :column="scope.column"></slot>
+          <slot v-else :name="key" :row="scope.row"></slot>
         </template>
       </ff-table-column>
       <el-table-column
@@ -104,10 +107,10 @@
    *
    * 可选参数
    * @param {Array|string} handler 操作栏显示的按钮类型，数组或“，”隔开的字符串，['add', 'edit', 'look', 'del']
-   * @param {boolean} is-show-index 是否显示索引
-   * @param {boolean} is-selection 是否多选
-   * @param {boolean} is-radio 是否单选
-   * @param {boolean} is-border 是否带边框
+   * @param {boolean} show-index 是否显示索引
+   * @param {boolean} select 是否多选
+   * @param {boolean} radio 是否单选
+   * @param {boolean} border 是否带边框
    * @param {boolean} drop-column 表格列是否可拖拽
    * @param {boolean} drop-row 表格行是否可拖拽， 需要设置rowKey
    * @param {boolean} colum-control 是否显示列控制按钮
@@ -118,11 +121,14 @@
    * @param {string} placeholder 当前项数据为''、null、undefined时显示的文本
    * @param {string} align 对齐方式
    * @param {boolean} export-file 是否显示导出按钮
+   * @param {boolean} stripe 是否为斑马纹 table
+   * @param {string|number} height Table的高度
+   * @param {string|number} max-height Table的最大高度
    * *
    * @function selection-change 当选择项发生变化时会触发该事件
    * @param {Array} selection 已选中的数组
    * *
-   * @function current-change 当表格的当前行发生变化的时候会触发该事件，如果要高亮当前行，请打开表格的 isRadio 属性
+   * @function current-change 当表格的当前行发生变化的时候会触发该事件，如果要高亮当前行，请打开表格的 radio 属性
    * @param {Object} row 当前行数据
    * *
    * @function row-click 当某一行被点击时会触发该事件
@@ -157,6 +163,7 @@
    * @param {boolean|string} sortable 是否排序，可选值true, false, 'custom'
    * @param {string|Array|function} sortBy 指定数据按照哪个属性进行排序，仅当 sortable 设置为 true 且没有设置 sort-method 的时候有效。如果 sort-by 为数组，则先按照第 1 个属性排序，如果第 1 个相等，再按照第 2 个排序，以此类推
    * @param {function} sortMethod 对数据进行排序的时候使用的方法，仅当 sortable 设置为 true 的时候有效，需返回一个数字，和 Array.sort 表现一致
+   * @param {boolean} fixed 列是否固定在左侧或者右侧，true 表示固定在左侧
    *
    * 自定义表头
    * 在标签中直接插入插槽名为header-[prop], 参数为{ column }
@@ -191,7 +198,6 @@ import cloneDeep from 'lodash/cloneDeep'
 export default {
   name: 'FfTable',
   components: {
-    render: _ => import('./render'),
     'ff-table-column': _ => import('./ff-table-column')
   },
   directives: {
@@ -215,19 +221,19 @@ export default {
       type: Array,
       default: _ => []
     },
-    isShowIndex: {
+    showIndex: {
       type: Boolean,
       default: false
     },
-    isSelection: {
+    select: {
       type: Boolean,
       default: false
     },
-    isRadio: {
+    radio: {
       type: Boolean,
       default: false
     },
-    isBorder: {
+    border: {
       type: Boolean,
       default: false
     },
@@ -268,7 +274,15 @@ export default {
     align: {
       type: String,
       default: 'center'
-    }
+    },
+    rowClassName: [Function, String],
+    stripe: {
+      type: Boolean,
+      default: false
+    },
+    height: [String, Number],
+    maxHeight: [String, Number],
+    spanMethod: Function
   },
   data () {
     return {
@@ -303,6 +317,9 @@ export default {
     handlerShow () {
       const handlerFlags = [this.isHasHandlerSlot, this.isAdd, this.isEdit, this.isLook, this.isDel]
       return handlerFlags.some(v => v)
+    },
+    slots () {
+      return this.$scopedSlots
     }
   },
   watch: {
@@ -323,12 +340,53 @@ export default {
     }
   },
   methods: {
-    _headerCellClassName ({ row, column, rowIndex, columnIndex }) {
-      return column.property ? 'title-' + column.property : ''
+    clearSelection () {
+      this.$refs.clearSelection()
     },
-    _hasHeader (prop) {
-      let slots = Object.keys(this.$scopedSlots)
-      return slots.includes(`header-${prop}`)
+    toggleAllSelection () {
+      this.$refs.table.toggleAllSelection()
+    },
+    clearSort () {
+      this.$refs.table.clearSort()
+    },
+    doLayout () {
+      this.$refs.table.doLayout()
+    },
+    toggleRowSelection (...args) {
+      this.$refs.table.toggleRowSelection(...args)
+    },
+    toggleRowExpansion (...args) {
+      this.$refs.table.toggleRowExpansion(...args)
+    },
+    setCurrentRow (...args) {
+      this.$refs.table.setCurrentRow(...args)
+    },
+    clearFilter (...args) {
+      this.$refs.table.clearFilter(...args)
+    },
+    sort (...args) {
+      this.$refs.table.sort(...args)
+    },
+    _getProperty (label) {
+      let property
+      const getProperty = titles => {
+        let title = titles.find(tit => tit.label === label)
+        if (title) property = title.prop
+        else {
+          titles.forEach(tit => {
+            if (tit.children) getProperty(tit.children)
+          })
+        }
+      }
+      getProperty(this.titles)
+      return property
+    },
+    _headerCellClassName ({ row, column, rowIndex, columnIndex }) {
+      let property = this._getProperty(column.label)
+      return property ? 'title-' + property : ''
+    },
+    _hasHeader (name) {
+      return name.includes('header')
     },
     _checkVal (val) {
       if (val === null || val === undefined || val === '') return true
@@ -354,9 +412,6 @@ export default {
     },
     _sortChange ({ column, prop, order }) {
       this.$emit('sort-change', { column, prop, order })
-    },
-    toggleRowSelection (row) {
-      this.$refs.table.toggleRowSelection(row)
     },
     _handleAdd (row) {
       this.$emit('add', row)
@@ -561,7 +616,7 @@ export default {
 </script>
 
 <style scoped>
-  .ff-el-table {
+  .ff-table {
     width: 100%;
   }
   .centerBtn {

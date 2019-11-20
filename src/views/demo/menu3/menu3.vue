@@ -29,14 +29,14 @@ export default {
         { id: 3, a: 111, b: 222 }
       ],
       titles: [
-        { label: 'aaa', slot: 'aaa' },
-        { label: 'bbb', slot: 'bbb' },
+        { label: 'aaa', prop: 'aaa', slot: 'aaa' },
+        { label: 'bbb', prop: 'bbb', slot: 'bbb' },
         {
           label: 'ccc',
           render: this.render,
           prop: 'c'
         },
-        { label: 'ddd', prop: 'bbb' }
+        { label: 'ddd', prop: 'ddd' }
       ]
     }
   },
