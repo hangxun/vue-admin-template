@@ -1,8 +1,17 @@
 <template>
-  <el-input
-    class="ff-input"
-    v-model="form[prop]"
+   <el-input
+    v-if="tp === 'number'"
     :type="tp"
+    v-model.number="form[prop]"
+    :placeholder="placeholder"
+    :disabled="disabled"
+    :readonly="readonly"
+    :show-password="showPassword"
+  ></el-input>
+  <el-input
+    v-else
+    :type="tp"
+    v-model="form[prop]"
     :placeholder="placeholder"
     :disabled="disabled"
     :readonly="readonly"
@@ -28,9 +37,8 @@ export default {
       return this.options.prop || ''
     },
     tp () {
-      let tp = this.options.tp
-      if (!tp || tp === 'number') return 'text'
-      else return tp
+      let tp = this.options.kind
+      return tp === 'int' ? 'number' : tp
     },
     placeholder () {
       return this.options.placeholder || ''
@@ -50,15 +58,13 @@ export default {
   },
   methods: {
     watchValue () {
-      this.$watch(() => {
-        return this.form[this.prop]
-      }, {
+      this.$watch(() => this.form[this.prop], {
         handler (val) {
           if (typeof val !== 'number' && val) {
             val = val.replace(/[\D]/g, '')
           }
-          if (val || val === 0) this.form[this.prop] = Number(val)
-          else this.form[this.prop] = ''
+          if (val || val === 0) this.$set(this.form, this.prop, val)
+          else this.$set(this.form, this.prop, '')
         },
         immediate: true
       })
