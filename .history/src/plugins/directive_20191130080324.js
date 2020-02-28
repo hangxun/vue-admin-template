@@ -3,7 +3,7 @@ const directives = {
    * 图片加载失败显示404图片
    * v-img-err="图片url（可省略，默认@/assets/404.gif）"
    * */
-  errImg (el, binding, vnode) {
+  imgErr (el, binding, vnode) {
     let errimg = binding.value || require('@/assets/404.gif')
     el.addEventListener('error', e => {
       e.target.src = errimg
